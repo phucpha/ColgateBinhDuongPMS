@@ -1,18 +1,49 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+### TwinCAT3 ###
+# website: https://www.beckhoff.com/twincat3/
 
-# Other files and folders
-.settings/
+# TwinCAT PLC
+*.plcproj.bak
+*.plcproj.orig
+*.tpy
+*.tclrs
+*.library
+*.compiled-library
+*.compileinfo
+*.asm
+*.core
+LineIDs.dbg
+LineIDs.dbg.bak
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+# TwinCAT C++ and shared types
+# ignoring the TMC file is only useful for plain PLC programming
+# as soon as shared data types (via tmc), C++ or in general TcCom-Module are used, the TMC file has to be part of the repository
+*.tmc
+*.tmcRefac
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# TwinCAT project files
+*.tsproj.bak
+*.tsproj.b?k
+*.tsproj.orig
+*.xti.bak
+*.xti.bk?
+*.xti.orig
+*.xtv
+*.xtv.bak
+*.xtv.bk?
+
+# Multiuser specific
+**/.TcGit/
+
+# exclude not required folders
+**/_Boot/
+**/_CompileInfo/
+**/_Libraries/
+**/_ModuleInstall/
+**/_Deployment/
+**/_Repository/
+
+# VS Shell project specific files and folders
+**/.vs/
+*.~u
+*.project.~u
+*.suo
