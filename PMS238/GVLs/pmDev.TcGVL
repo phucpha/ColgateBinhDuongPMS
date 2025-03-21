@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="pmDev" Id="{a8c10848-6da4-4993-9d0c-64e1409287c4}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	DB01_02_5350		: ST_PowerMeter; //DB12.1
+	DB01_03_5350		: ST_PowerMeter; //DB11.1
+	DB01_05_5350		: ST_PowerMeter; //LP-PR6B
+	DB01_06_5350		: ST_PowerMeter; //LP-PR6A
+	DB01_12_5350		: ST_PowerMeter; //LP-WH2
+	
+	DB01_01_5500		: ST_PowerMeter; //DB12
+	DB01_04_5500		: ST_PowerMeter; //DB11
+	DB01_07_5500		: ST_PowerMeter; //DB-PR2
+	DB01_11_5500		: ST_PowerMeter; //LP-WH1
+	DB01_18_5500		: ST_PowerMeter; //DB-WH
+	DB01_20_5500		: ST_PowerMeter; //LP-BM
+	DB01_22_5500		: ST_PowerMeter; //DB-BM 
+	
+	DB02_01_5350		: ST_PowerMeter; //DB13.1
+	DB02_03_5350		: ST_PowerMeter; //DB15.1
+	DB02_05_5350		: ST_PowerMeter; //DB14.1 
+	DB02_07_5350		: ST_PowerMeter; //LP-PR5B
+	DB02_08_5350		: ST_PowerMeter; //LP-PR5A
+	
+	DB02_02_5500		: ST_PowerMeter; //DB13
+	DB02_04_5500		: ST_PowerMeter; //DB15
+	DB02_06_5500		: ST_PowerMeter; //DB14
+	
+	
+	DB03_01_5350		: ST_PowerMeter; //DB7.1
+	DB03_03_5350		: ST_PowerMeter; //DB5.1 
+	DB03_05_5350		: ST_PowerMeter; //DB6.1
+	DB03_07_5350		: ST_PowerMeter; //LP-PR3B
+	DB03_08_5350		: ST_PowerMeter; //LP-PR3A
+	
+	DB03_02_5500		: ST_PowerMeter; //DB7
+	DB03_04_5500		: ST_PowerMeter; //DB5
+	DB03_06_5500		: ST_PowerMeter; //DB6
+	
+	DB04_01_5350		: ST_PowerMeter; //DB4.1 
+	DB04_03_5350		: ST_PowerMeter; //DB3.1 
+	DB04_05_5350		: ST_PowerMeter; //DB2.1 
+	DB04_07_5350		: ST_PowerMeter; //LP-PR4B
+	DB04_08_5350		: ST_PowerMeter; //LP-PR4A
+	
+	DB04_02_5500		: ST_PowerMeter; //DB4
+	DB04_04_5500		: ST_PowerMeter; //DB3
+	DB04_06_5500		: ST_PowerMeter; //DB2
+	
+	
+	DB05_01_5350		: ST_PowerMeter; //LP-PR1A
+	DB05_02_5350		: ST_PowerMeter; //LP-PR1B
+	DB05_03_5350		: ST_PowerMeter; //DB8.1 
+	DB05_05_5350		: ST_PowerMeter; //DB9.1 
+	DB05_07_5350		: ST_PowerMeter; //DB10.1
+	DB05_09_5350		: ST_PowerMeter; //DB1.1
+	DB05_21_5350		: ST_PowerMeter; //LP-PR2B
+	DB05_22_5350		: ST_PowerMeter; //LP-PR2A
+	
+	DB05_04_5500		: ST_PowerMeter; //DB8
+	DB05_06_5500		: ST_PowerMeter; //DB9
+	DB05_08_5500		: ST_PowerMeter; //DB10
+	DB05_10_5500		: ST_PowerMeter; //DB1 
+	
+	DB06_01_5500		: ST_PowerMeter; //LP-EL2
+	DB06_02_5500		: ST_PowerMeter; //LV-SECTION4
+	DB06_03_5500		: ST_PowerMeter; //LP-EL1
+	DB06_04_5500		: ST_PowerMeter; //LV-SECTION3
+	DB06_05_5500		: ST_PowerMeter; //DB-PR1 (S2) 
+	DB06_06_5500		: ST_PowerMeter; //DB-PR1(S1)
+	DB06_07_5500		: ST_PowerMeter; //DB-AHU
+	DB06_08_5500		: ST_PowerMeter; //DB-OFF1
+	DB06_11_5500		: ST_PowerMeter; //DB-MR
+	DB06_33_5500		: ST_PowerMeter; //DB-KIT
+	DB06_38_5500		: ST_PowerMeter; //DB-OFF2
+	
+	DB07_01_5500		: ST_PowerMeter; //LV-SECTION1
+	DB07_02_5500		: ST_PowerMeter; // LV-SECTION2
+	DB07_03_5500		: ST_PowerMeter; //DB-AIRCOMP 
+	DB07_04_5500		: ST_PowerMeter; //DB-MVAC2
+	DB07_05_5500		: ST_PowerMeter; //DB-MVAC1
+	///////////////////////////////////////////////Sun update Code
+	DB07_06_5350		: ST_PowerMeter; // A1
+	DB07_07_5350		: ST_PowerMeter; //A2
+	DB07_08_5350		: ST_PowerMeter; //A3
+	DB07_09_5350		: ST_PowerMeter; //A4
+	DB07_10_5350		: ST_PowerMeter; //A5
+	DB07_11_5350		: ST_PowerMeter; //CH4
+	DB07_12_5350		: ST_PowerMeter; //CH5
+	DB07_13_5350		: ST_PowerMeter; //CH6
+	/////// virtual metter 
+	PowerMeter_Db1_2	: st_powerMeter;// DB1.2
+	PowerMeter_Db2_2	: ST_PowerMeter;
+	PowerMeter_db3_2	: ST_PowerMeter;
+	PowerMeter_db4_2	: ST_PowerMeter;
+	PowerMeter_db5_2	: ST_PowerMeter;
+	powerMeter_db6_2	: ST_PowerMeter;
+	PowerMeter_db7_2	: ST_PowerMeter;
+	PowerMeter_db8_2	: ST_PowerMeter;
+	PowerMeter_db9_2	: ST_PowerMeter;
+	PowerMeter_db10_2	: ST_PowerMeter;
+	PowerMeter_db11_2	: ST_PowerMeter;
+	PowerMeter_db12_2	: ST_PowerMeter;
+	PowerMeter_db13_2	: ST_PowerMeter;
+	PowerMeter_db14_2	: ST_PowerMeter;
+	PowerMeter_db15_2	: ST_PowerMeter;
+
+	// new meter
+	PowerMeter_Lv01		: ST_PowerMeter;
+	PowerMeter_Lv02		: ST_PowerMeter;
+	PowerMeter_Lv03		: ST_PowerMeter;
+	PowerMeter_Lv04		: ST_PowerMeter;
+	
+
+	
+
+	MetersEnergyHour	: st_PowersKw;// aveva
+	bAvevaDisableAllTrendDataSaving : BOOL := TRUE;
+	TonWaitReadMeter : TON;
+	
+	NT_GetTime : NT_GetTime;
+	AvevaTimeStruct : TIMESTRUCT;
+	bAlarmDifferentTime2System : BOOL;
+END_VAR
+
+VAR_GLOBAL PERSISTENT 
+	IntoLoadHourBefor : st_PowersKw;
+	nDaysMettersReportData : ARRAY [0..pmDev.MaxStackDaysPersistance-1] OF St_MettersReportData;
+	stateReport : St_StateMetterReport;
+	// stReportEnergy use fore report to aveva 
+	stReportEnergy : St_MettersReportData;
+	// catch the EnergyIntoLoadAt0hToday or is value record at power ON fist time in today
+	stEnergyIntoLoadAt0hToday : St_MettersReportData;
+END_VAR
+
+VAR_GLOBAL CONSTANT
+	// so ngay luu du gia tri dien
+	MaxStackDaysPersistance : UINT := 20 ;
+	startYear : UINT := 2024;
+	endYear : UINT := 2030;
+	InvalidValueEnergyIntoload   : LREAL := 1E12; // if Energy Intoload bigger this parameter or lower than (-NanEnergyIntoload) , EnergyIntoload can't be use
+	numAllMeter	 :UINT := 87;
+	SecondDifferentAllow : UDINT := 300;
+END_VAR
+// commissioning
+VAR_GLOBAL
+	bTrigReadCOmmision : BOOL;
+END_VAR
+
+//aveva control view
+VAR_GLOBAL
+	ID_Screen: INT;
+	Value01: LREAL;
+	Value02: LREAL;
+	Value03: LREAL;
+	Value04: LREAL;
+	Value05: LREAL;
+	Value06: LREAL;
+	Value07: LREAL;
+	Value08: LREAL;
+	Value09: LREAL;
+	Value10: LREAL;
+	Value11: LREAL;
+	Value12: LREAL;
+	Value13: LREAL;
+	Value14: LREAL;
+	Value15: LREAL;
+	Value16: LREAL;
+	Value17: LREAL;
+	Value18: LREAL;
+	Value19: LREAL;
+	Value20: LREAL;
+	Value21: LREAL;
+	Value22: LREAL;
+	Value23: LREAL;
+	Value24: LREAL;
+	Value25: LREAL;
+	Value26: LREAL;
+	Value27: LREAL;
+	Value28: LREAL;
+	Value29: LREAL;
+	Value30: LREAL;
+	Value31: LREAL;
+	Value32: LREAL;
+	Value33: LREAL;
+	Value34: LREAL;
+	Value35: LREAL;
+	Value36: LREAL;
+	Value37: LREAL;
+	Value38: LREAL;
+	Value39: LREAL;
+	Value40: LREAL;
+	Value41: LREAL;
+	Value42: LREAL;
+	Value43: LREAL;
+	Value44: LREAL;
+	Value45: LREAL;
+	Value46: LREAL;
+	Value47: LREAL;
+	Value48: LREAL;
+	Value49: LREAL;
+	Value50: LREAL;
+	Value51: LREAL;
+	Value52: LREAL;
+	Value53: LREAL;
+	Value54: LREAL;
+	Value55: LREAL;
+	Value56: LREAL;
+	Value57: LREAL;
+	Value58: LREAL;
+	Value59: LREAL;
+	Value60: LREAL;
+	Value61: LREAL;
+	Value62: LREAL;
+	Value63: LREAL;
+	Value64: LREAL;
+	Value65: LREAL;
+	Value66: LREAL;
+	Value67: LREAL;
+	Value68: LREAL;
+	Value69: LREAL;
+	Value70: LREAL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

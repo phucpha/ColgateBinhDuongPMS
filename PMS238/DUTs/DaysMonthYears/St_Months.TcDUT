@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="St_Months" Id="{06b3e35d-5fa4-468d-9fb4-bea0e7698417}">
+    <Declaration><![CDATA[TYPE St_Months :
+STRUCT
+	months : ARRAY [1..12] OF St_days;
+	fSumMonths : REAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

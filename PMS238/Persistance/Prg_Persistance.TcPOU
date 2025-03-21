@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="Prg_Persistance" Id="{ad865142-7ab1-4ee4-9c9b-55f1fdeb4d9f}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM Prg_Persistance
+VAR
+FB_S_UPS_CX8190	: FB_S_UPS_CX81xx;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FB_S_UPS_CX8190(	sNetID :='',
+					iPLCPort        := 851, (* PLC Runtime System for writing persistent data *)
+  					tTimeout        := DEFAULT_ADS_TIMEOUT, (* ADS Timeout *)
+    				eUpsMode        := eSUPS_WrPersistData_Shutdown, (* UPS mode (w/wo writing persistent data, w/wo NO shutdown) *)
+   					ePersistentMode := SPDM_2PASS, (* mode for writing persistent data *)
+    				tRecoverTime    := T#10S, (* ON time to recover from short power failure in mode eSUPS_WrPersistData_NoShutdown/eSUPS_CheckPowerStatus *)
+					);
+					
+					
+]]></ST>
+    </Implementation>
+    <LineIds Name="Prg_Persistance">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="3" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="19" Count="2" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

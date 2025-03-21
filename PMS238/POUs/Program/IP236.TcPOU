@@ -1,0 +1,320 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="IP236" Id="{acd8d4c0-f512-44fa-adf7-17da8b59fda0}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM IP236
+VAR
+	timer				: TON;
+	bDoReading			: BOOL;
+	
+	bOnInit				: BOOL	:= TRUE;
+	timerInit			: TON;
+	
+	nState				: INT;
+	
+	fbInit236_01_5500			: FB_InitPM;
+	fbInit236_02_5500			: FB_InitPM;
+	fbInit236_03_5500			: FB_InitPM;
+	fbInit236_04_5500			: FB_InitPM;
+	fbInit236_05_5500			: FB_InitPM;
+	fbInit236_06_5500			: FB_InitPM;
+	fbInit236_07_5500			: FB_InitPM;
+	fbInit236_08_5500			: FB_InitPM;
+	fbInit236_11_5500			: FB_InitPM;
+	fbInit236_33_5500			: FB_InitPM;
+	fbInit236_38_5500			: FB_InitPM;
+	
+	fbRead236_01_5500			: FB_ReadPM5500;
+	fbRead236_02_5500			: FB_PM_ION_9000;
+	
+	//Update 29-08-2022
+	fbRead236_03_5500			: FB_ReadPM5350;
+	
+	fbRead236_04_5500			: FB_PM_ION_9000;
+	
+	//Update 29-08-2022
+	fbRead236_05_5500			: FB_ReadPM5350;
+	//Update 29-08-2022
+	fbRead236_06_5500			: FB_ReadPM5350;
+	
+	
+	fbRead236_07_5500			: FB_ReadPM5500;
+	fbRead236_08_5500			: FB_ReadPM5500;
+	fbRead236_11_5500			: FB_ReadPM5500;
+	fbRead236_33_5500			: FB_ReadPM5500;
+	fbRead236_38_5500			: FB_ReadPM5500;
+	
+	nCount						: DINT;
+END_VAR
+
+VAR CONSTANT
+	STATE_INIT			:	INT		:= 0;
+	STATE_READ1			:	INT		:= 10;
+	STATE_READ2			:	INT		:= 20;
+	STATE_READ3			:	INT		:= 30;
+	STATE_READ4			:	INT		:= 40;
+	STATE_READ5			:	INT		:= 50;
+	STATE_READ6			:	INT		:= 60;
+	STATE_READ7			:	INT		:= 70;
+	STATE_READ8			:	INT		:= 80;
+	STATE_READ11		:	INT		:= 110;
+	STATE_READ33		:	INT		:= 330;
+	STATE_READ38		:	INT		:= 380;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[timerInit(In:=TRUE, PT:=T#3S);
+IF timerInit.Q THEN
+	timerInit(In:=FALSE);
+		bOnInit	:= FALSE;
+	END_IF
+
+IF bOnInit THEN
+	fbInit236_01_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 1,
+						PM			:= pmDev.DB06_01_5500);
+	fbInit236_02_5500(	sIpAddress	:= '10.91.37.230',
+						nPort		:= 502,
+						nUnitID		:= 255,
+						PM			:= pmDev.DB06_02_5500);
+	fbInit236_03_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 3,
+						PM			:= pmDev.DB06_03_5500);
+	fbInit236_04_5500(	sIpAddress	:= '10.91.37.229',
+						nPort		:= 502,
+						nUnitID		:= 255,
+						PM			:= pmDev.DB06_04_5500);
+	fbInit236_05_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 5,
+						PM			:= pmDev.DB06_05_5500);
+						
+	fbInit236_06_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 6,
+						PM			:= pmDev.DB06_06_5500);
+						
+	fbInit236_07_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 7,
+						PM			:= pmDev.DB06_07_5500);
+						
+	fbInit236_08_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 8,
+						PM			:= pmDev.DB06_08_5500);
+						
+	fbInit236_11_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 11,
+						PM			:= pmDev.DB06_11_5500);
+						
+	fbInit236_33_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 33,
+						PM			:= pmDev.DB06_33_5500);
+						
+	fbInit236_38_5500(	sIpAddress	:= '10.91.37.236',
+						nPort		:= 502,
+						nUnitID		:= 38,
+						PM			:= pmDev.DB06_38_5500);
+END_IF
+
+IF NOT bOnInit THEN
+	timer(In:=TRUE, PT:=T#5M);
+	IF timer.Q OR pmdev.bTrigReadCOmmision THEN
+		timer(In:=FALSE);
+		nState	:= STATE_READ1;
+	END_IF
+END_IF
+
+
+CASE nState OF
+STATE_INIT:
+	nCount	:= nCount + 1;
+STATE_READ1:
+	fbRead236_01_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_01_5500);
+	IF NOT fbRead236_01_5500.Q THEN
+		nState	:= STATE_READ2;
+		fbRead236_01_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_01_5500);
+	END_IF
+	
+STATE_READ2:
+	fbRead236_02_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_02_5500);
+	IF NOT fbRead236_02_5500.Q THEN
+		nState	:= STATE_READ3;
+		fbRead236_02_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_02_5500);
+	END_IF	
+
+STATE_READ3:
+
+	fbRead236_03_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_03_5500);
+	IF NOT fbRead236_03_5500.Q THEN
+		nState	:= STATE_READ4;
+		fbRead236_03_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_03_5500);
+	END_IF	
+	
+STATE_READ4:
+	fbRead236_04_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_04_5500);
+	IF NOT fbRead236_04_5500.Q THEN
+		nState	:= STATE_READ5;
+		fbRead236_04_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_04_5500);
+	END_IF	
+	
+STATE_READ5:
+
+	fbRead236_05_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_05_5500);
+	IF NOT fbRead236_05_5500.Q THEN
+		nState	:= STATE_READ6;
+		fbRead236_05_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_06_5500);
+	END_IF	
+	
+STATE_READ6:
+
+	
+	fbRead236_06_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_06_5500);
+	IF NOT fbRead236_06_5500.Q THEN
+		nState	:= STATE_READ7;
+		fbRead236_06_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_06_5500);
+	END_IF	
+	
+STATE_READ7:
+	fbRead236_07_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_07_5500);
+	IF NOT fbRead236_07_5500.Q THEN
+		nState	:= STATE_READ8;
+		fbRead236_07_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_07_5500);
+	END_IF
+	
+STATE_READ8:
+	fbRead236_08_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_08_5500);
+	IF NOT fbRead236_08_5500.Q THEN
+		nState	:= STATE_READ11;
+		fbRead236_08_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_08_5500);
+	END_IF
+	
+STATE_READ11:
+	fbRead236_11_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_11_5500);
+	IF NOT fbRead236_11_5500.Q THEN
+		nState	:= STATE_READ33;
+		fbRead236_11_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_11_5500);
+	END_IF
+	
+STATE_READ33:
+	fbRead236_33_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_33_5500);
+	IF NOT fbRead236_33_5500.Q THEN
+		nState	:= STATE_READ38;
+		fbRead236_33_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_33_5500);
+	END_IF
+	
+STATE_READ38:
+	fbRead236_38_5500(
+		bExecute:=TRUE,
+		PM:= pmDev.DB06_38_5500);
+	IF NOT fbRead236_38_5500.Q THEN
+		nState	:= STATE_INIT;
+		fbRead236_38_5500(
+			bExecute:=FALSE,
+			PM:= pmDev.DB06_38_5500);
+	END_IF
+	
+END_CASE
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="IP236">
+      <LineId Id="81" Count="26" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="198" Count="2" />
+      <LineId Id="197" Count="0" />
+      <LineId Id="201" Count="0" />
+      <LineId Id="203" Count="2" />
+      <LineId Id="202" Count="0" />
+      <LineId Id="206" Count="0" />
+      <LineId Id="208" Count="2" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="211" Count="0" />
+      <LineId Id="213" Count="2" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="218" Count="2" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="223" Count="2" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="108" Count="8" />
+      <LineId Id="131" Count="27" />
+      <LineId Id="374" Count="0" />
+      <LineId Id="376" Count="7" />
+      <LineId Id="375" Count="0" />
+      <LineId Id="168" Count="12" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="356" Count="7" />
+      <LineId Id="355" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="344" Count="0" />
+      <LineId Id="346" Count="7" />
+      <LineId Id="345" Count="0" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="239" Count="8" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="248" Count="0" />
+      <LineId Id="251" Count="8" />
+      <LineId Id="250" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="262" Count="8" />
+      <LineId Id="261" Count="0" />
+      <LineId Id="271" Count="0" />
+      <LineId Id="273" Count="8" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="282" Count="0" />
+      <LineId Id="284" Count="8" />
+      <LineId Id="283" Count="0" />
+      <LineId Id="190" Count="1" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

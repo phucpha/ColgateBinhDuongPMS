@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_InitPM" Id="{3f59bf5b-6dcb-4ed2-9e76-1262f0fb922f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_InitPM
+VAR_INPUT
+	sIpAddress		: STRING;
+	nUnitID			: BYTE;
+	nPort			: UINT;
+END_VAR
+
+VAR_OUTPUT
+END_VAR
+
+VAR_IN_OUT
+	PM		:	ST_PowerMeter;
+END_VAR
+
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(******** Init Connection **************)
+PM.Conn.sIPAddress		:= sIpAddress;
+PM.Conn.nUnitID			:= nUnitID;
+PM.Conn.nPort			:= nPort;]]></ST>
+    </Implementation>
+    <LineIds Name="FB_InitPM">
+      <LineId Id="23" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="19" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

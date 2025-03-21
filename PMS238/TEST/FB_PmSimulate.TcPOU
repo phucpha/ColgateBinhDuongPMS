@@ -1,0 +1,796 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_PmSimulate" Id="{5cbcdf14-0aa4-4e82-a9a0-d73342ecf057}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_PmSimulate
+VAR
+	PM : REFERENCE TO ST_PowerMeter;	
+END_VAR 
+
+VAR
+	sName : STRING;
+	Param : REFERENCE TO ST_PMGeneral;
+	bFirstCycle : BOOL := TRUE;
+	estate : E_PM_Simulate;
+	tonReadCycle : TON;
+	randomUpdate : DRAND;
+	valueGenerateRand : LREAL;
+	percentVariation : LREAL := 0.05;
+	
+	
+	Real_PowerA : LREAL := 1000;
+	Real_PowerB : LREAL := 1000;
+	Real_PowerC : LREAL := 1000;
+	Real_PowerTotal : LREAL := 1000;
+	Reactive_PowerA : LREAL := 1000;
+	Reactive_PowerB : LREAL := 1000; 
+	Reactive_PowerC : LREAL := 1000;
+	Reactive_PowerTotal : LREAL := 1000;
+	Apparent_PowerA : LREAL := 1000;
+	Apparent_PowerB : LREAL := 1000;
+	Apparent_PowerC : LREAL := 1000;
+	Apparent_PowerTotal : LREAL := 1000;
+	Voltage_AB : LREAL := 380;
+	Voltage_BC : LREAL := 390;
+	Voltage_CA : LREAL := 375;
+	Voltage_LLAvg : LREAL := 382;
+	Voltage_AN : LREAL := 225;
+	Voltage_BN : LREAL := 230;
+	Voltage_CN : LREAL := 220;
+	Voltage_LNAvg : LREAL := 222;
+	THDF_Voltage_AB : LREAL := 50;
+	THDF_Voltage_BC : LREAL := 50;
+	THDF_Voltage_CA : LREAL := 50;
+	THDF_Voltage_LL : LREAL := 50;
+	THDF_Voltage_AN : LREAL := 50;
+	THDF_Voltage_BN : LREAL := 50;
+	THDF_Voltage_CN : LREAL := 50;
+	THDF_Voltage_LN : LREAL := 50;
+	thdR_Voltage_AB : LREAL := 50;
+	thdR_Voltage_BC : LREAL := 50;
+	thdR_Voltage_CA : LREAL := 50;
+	thdR_Voltage_LL : LREAL := 50;
+	thdR_Voltage_AN : LREAL := 50;
+	thdR_Voltage_BN : LREAL := 50;
+	thdR_Voltage_CN : LREAL := 50;
+	thdR_Voltage_LN : LREAL := 50;
+	Current_A : LREAL := 1;
+	Current_B : LREAL := 1;
+	Current_C : LREAL := 1;
+	Current_N : LREAL := 1;
+	Current_G : LREAL := 1;
+	Current_Avg : LREAL := 1;
+	THDF_Current_A : LREAL := 1;
+	THDF_Current_B : LREAL := 1;
+	THDF_Current_C : LREAL := 1;
+	THDF_Current_N : LREAL := 1 ;
+	THDF_Current_G : LREAL := 1;
+	thdR_Current_A : LREAL := 1;
+	thdR_Current_B : LREAL := 1;
+	thdR_Current_C : LREAL := 1;
+	thdR_Current_N : LREAL := 1;
+	thdR_Current_G : LREAL := 1;
+	Total_Demand_Distortion : LREAL := 1;
+	RealEnergy_IntoLoad : LREAL := 1;
+	dentalRealEnergy_IntoLoad : LREAL := 1;
+	RealEnergy_OutLoad : LREAL := 1;
+	RealEnergy_Absolute : LREAL := 1;
+	RealEnergy_Signed : LREAL := 1;
+	ReactiveEnergy_IntoLoad : LREAL := 1;
+	ReactiveEnergy_OutLoad : LREAL := 1;
+	ReactiveEnergy_Absolute : LREAL := 1;
+	ReactiveEnergy_Signed : LREAL := 1;
+	ApparentEnergy_IntoLoad : LREAL := 1;
+	ApparentEnergy_OutLoad : LREAL := 1;
+	ApparentEnergy : LREAL := 1;
+	ApparentEnergy_Delivered_Received : LREAL := 1;
+	Frequency : LREAL := 50;
+	PowerFactor : LREAL := 1;
+	SeedDrand : INT;
+	valid : BOOL;
+	ProbabilityOfErrorData : LREAL := 0.1; //10%
+END_VAR
+VAR_STAT
+	NumInstant : INT;
+END_VAR
+VAR PERSISTENT
+	validEnvergyIntoLoad : LREAL;
+END_VAR
+(*VAR_IN_OUT
+	PM		:	ST_PowerMeter;
+END_VAR*)
+VAR
+	bOtherDataGood : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bFirstCycle THEN
+	bFirstCycle := FALSE;
+	Param REF=  PM.Basic;
+	Param.RealEnergy_IntoLoad := RealEnergy_IntoLoad;
+	Param.RealEnergy_OutLoad := RealEnergy_OutLoad;
+	Param.ReactiveEnergy_IntoLoad := ReactiveEnergy_IntoLoad;
+	Param.ReactiveEnergy_OutLoad := ReactiveEnergy_OutLoad;
+END_IF
+tonReadCycle(IN := TRUE,
+				PT := T#5M);
+
+randomUpdate();
+CASE estate OF
+	PM_SIMU_WAIT:
+		IF tonReadCycle.Q THEN
+			tonReadCycle(IN:= FALSE);
+			randomUpdate(Num => valueGenerateRand,
+							Seed := SeedDrand);
+			IF randomUpdate.Num > ProbabilityOfErrorData THEN
+				estate := PM_SIMU_UPDATE;
+			ELSE
+				estate := PM_SIMU_READ_FAULT;
+			END_IF
+		END_IF
+		
+	PM_SIMU_UPDATE:
+		Param.Real_PowerA := FgenerateRandom(percent := percentVariation, rawValue := Real_PowerA, ValueDrandGenerate := valueGenerateRand);
+		Param.Real_PowerB :=  FgenerateRandom(percent := percentVariation, rawValue := Real_PowerB, ValueDrandGenerate := valueGenerateRand);
+		Param.Real_PowerC := FgenerateRandom(percent := percentVariation, rawValue := Real_PowerC, ValueDrandGenerate := valueGenerateRand);
+		Param.Real_PowerTotal := FgenerateRandom(percent := percentVariation, rawValue := Real_PowerTotal, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_AB := FgenerateRandom(percent := percentVariation, rawValue := Voltage_AB, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_BC := FgenerateRandom(percent := percentVariation, rawValue := Voltage_BC, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_CA := FgenerateRandom(percent := percentVariation, rawValue := Voltage_CA, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_LLAvg := FgenerateRandom(percent := percentVariation, rawValue := Voltage_LLAvg, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_AN := FgenerateRandom(percent := percentVariation, rawValue := Voltage_AN, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_BN := FgenerateRandom(percent := percentVariation, rawValue := Voltage_BN, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_CN := FgenerateRandom(percent := percentVariation, rawValue := Voltage_CN, ValueDrandGenerate := valueGenerateRand);
+		Param.Voltage_LNAvg := FgenerateRandom(percent := percentVariation, rawValue := Real_PowerA, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Voltage_AB := FgenerateRandom(percent := percentVariation, rawValue := Voltage_LNAvg, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Voltage_BC := FgenerateRandom(percent := percentVariation, rawValue := THDF_Voltage_BC, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Voltage_CA := FgenerateRandom(percent := percentVariation, rawValue := THDF_Voltage_CA, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Voltage_LN := FgenerateRandom(percent := percentVariation, rawValue := THDF_Voltage_LN, ValueDrandGenerate := valueGenerateRand);
+		Param.Current_A := FgenerateRandom(percent := percentVariation, rawValue := Current_A, ValueDrandGenerate := valueGenerateRand);
+		Param.Current_B := FgenerateRandom(percent := percentVariation, rawValue := Current_B, ValueDrandGenerate := valueGenerateRand);
+		Param.Current_C := FgenerateRandom(percent := percentVariation, rawValue := Real_PowerA, ValueDrandGenerate := valueGenerateRand);
+		Param.Current_Avg := FgenerateRandom(percent := percentVariation, rawValue := Current_C, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Current_A := FgenerateRandom(percent := percentVariation, rawValue := THDF_Current_A, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Current_B := FgenerateRandom(percent := percentVariation, rawValue := THDF_Current_B, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Current_C := FgenerateRandom(percent := percentVariation, rawValue := THDF_Current_C, ValueDrandGenerate := valueGenerateRand);
+		Param.THDF_Current_N := FgenerateRandom(percent := percentVariation, rawValue := THDF_Current_N, ValueDrandGenerate := valueGenerateRand);
+		//
+		RealEnergy_IntoLoad := RealEnergy_IntoLoad + FgenerateRandom(percent := percentVariation, rawValue := dentalRealEnergy_IntoLoad, ValueDrandGenerate := valueGenerateRand);
+		Param.RealEnergy_IntoLoad := RealEnergy_IntoLoad;
+		//
+		Param.RealEnergy_OutLoad := RealEnergy_OutLoad + FgenerateRandom(percent := percentVariation, rawValue := 10, ValueDrandGenerate := valueGenerateRand);
+		Param.ReactiveEnergy_IntoLoad := ReactiveEnergy_IntoLoad + Param.ReactiveEnergy_IntoLoad + FgenerateRandom(percent := 10, rawValue := ReactiveEnergy_IntoLoad, ValueDrandGenerate := valueGenerateRand);
+		Param.ReactiveEnergy_OutLoad := ReactiveEnergy_OutLoad + FgenerateRandom(percent := percentVariation, rawValue := 10, ValueDrandGenerate := valueGenerateRand);
+		Param.ApparentEnergy_IntoLoad := ApparentEnergy_IntoLoad + FgenerateRandom(percent := percentVariation, rawValue := 10, ValueDrandGenerate := valueGenerateRand);
+		Param.ApparentEnergy_OutLoad := ApparentEnergy_OutLoad  + FgenerateRandom(percent := percentVariation, rawValue := 10, ValueDrandGenerate := valueGenerateRand);
+		Param.PowerFactor := FgenerateRandom(percent := percentVariation, rawValue := PowerFactor, ValueDrandGenerate := valueGenerateRand);
+		Param.Frequency :=  FgenerateRandom(percent := percentVariation, rawValue := Frequency, ValueDrandGenerate := valueGenerateRand);
+		estate := PM_SIMU_WAIT;
+				bOtherdataGood := 	IsGoodData( param.Voltage_LLAvg )
+				AND IsGoodData( param.Current_Avg)
+				AND IsGoodData(	param.Frequency)
+				AND IsGoodData( param.Voltage_AN)
+				AND IsGoodData(	param.Voltage_AB)
+				AND IsGoodData( param.Voltage_BN)
+				AND IsGoodData(	param.Voltage_BC)
+				AND IsGoodData( param.Voltage_CN)
+				AND IsGoodData(	param.Voltage_CA);
+				
+				
+		IF IsGoodData (param.RealEnergy_IntoLoad ) AND bOtherDataGood THEN
+			;// pm.Basic.RealEnergy_IntoLoad still it
+			validEnvergyIntoLoad := param.RealEnergy_IntoLoad;
+		ELSE
+			param.RealEnergy_IntoLoad := validEnvergyIntoLoad;
+		END_IF
+		
+		//round value
+			(*param.RealEnergy_IntoLoad := F_RoundLrealEx(	lrIn 	:= param.RealEnergy_IntoLoad,
+												iPrecision 	:= 0);*)
+														
+			param.PowerFactor := F_RoundLrealEx(	lrIn 	:= param.PowerFactor,
+										iPrecision 	:= 2);
+	PM_SIMU_READ_FAULT:
+		param.Current_Unbalane_A := bmsConst.vINIT;
+		param.Current_Unbalane_B := bmsConst.vINIT;
+		param.Current_Unbalane_C := bmsConst.vINIT;
+		param.Current_Unbalane_Worst := bmsConst.vINIT;
+		param.Current_Unbalane_AB := bmsConst.vINIT;
+		param.Current_Unbalane_BC := bmsConst.vINIT;
+		param.Current_Unbalane_CA := bmsConst.vINIT;
+		param.Current_Unbalane_LL_Worst := bmsConst.vINIT;
+		param.Current_Unbalane_AN := bmsConst.vINIT;
+		param.Current_Unbalane_BN := bmsConst.vINIT;
+		param.Current_Unbalane_CN := bmsConst.vINIT;
+		param.Current_Unbalane_LN_Worst := bmsConst.vINIT;
+		param.Real_PowerA := bmsConst.vINIT;
+		param.Real_PowerB := bmsConst.vINIT;
+		param.Real_PowerC := bmsConst.vINIT;
+		param.Real_PowerTotal := bmsConst.vINIT;
+		param.Reactive_PowerA := bmsConst.vINIT;
+		param.Reactive_PowerB := bmsConst.vINIT;
+		param.Reactive_PowerC := bmsConst.vINIT;
+		param.Reactive_PowerTotal := bmsConst.vINIT;
+		param.Apparent_PowerA := bmsConst.vINIT;
+		param.Apparent_PowerB := bmsConst.vINIT;
+		param.Apparent_PowerC := bmsConst.vINIT;
+		param.Apparent_PowerTotal := bmsConst.vINIT;
+		param.Voltage_AB := bmsConst.vINIT;
+		param.Voltage_BC := bmsConst.vINIT;
+		param.Voltage_CA := bmsConst.vINIT;
+		param.Voltage_LLAvg := bmsConst.vINIT;
+		param.Voltage_AN := bmsConst.vINIT;
+		param.Voltage_BN := bmsConst.vINIT;
+		param.Voltage_CN := bmsConst.vINIT;
+		param.Voltage_LNAvg := bmsConst.vINIT;
+		param.THDF_Voltage_AB := bmsConst.vINIT;
+		param.THDF_Voltage_BC := bmsConst.vINIT;
+		param.THDF_Voltage_CA := bmsConst.vINIT;
+		param.THDF_Voltage_LL := bmsConst.vINIT;
+		param.THDF_Voltage_AN := bmsConst.vINIT;
+		param.THDF_Voltage_BN := bmsConst.vINIT;
+		param.THDF_Voltage_CN := bmsConst.vINIT;
+		param.THDF_Voltage_LN := bmsConst.vINIT;
+		param.thdR_Voltage_AB := bmsConst.vINIT;
+		param.thdR_Voltage_BC := bmsConst.vINIT;
+		param.thdR_Voltage_CA := bmsConst.vINIT;
+		param.thdR_Voltage_LL := bmsConst.vINIT;
+		param.thdR_Voltage_AN := bmsConst.vINIT;
+		param.thdR_Voltage_BN := bmsConst.vINIT;
+		param.thdR_Voltage_CN := bmsConst.vINIT;
+		param.thdR_Voltage_LN := bmsConst.vINIT;
+		param.Current_A := bmsConst.vINIT;
+		param.Current_B := bmsConst.vINIT;
+		param.Current_C := bmsConst.vINIT;
+		param.Current_N := bmsConst.vINIT;
+		param.Current_G := bmsConst.vINIT;
+		param.Current_Avg := bmsConst.vINIT;
+		param.THDF_Current_A := bmsConst.vINIT;
+		param.THDF_Current_B := bmsConst.vINIT;
+		param.THDF_Current_C := bmsConst.vINIT;
+		param.THDF_Current_N := bmsConst.vINIT;
+		param.THDF_Current_G := bmsConst.vINIT;
+		param.thdR_Current_A := bmsConst.vINIT;
+		param.thdR_Current_B := bmsConst.vINIT;
+		param.thdR_Current_C := bmsConst.vINIT;
+		param.thdR_Current_N := bmsConst.vINIT;
+		param.thdR_Current_G := bmsConst.vINIT;
+		param.Total_Demand_Distortion := bmsConst.vINIT;
+		param.RealEnergy_IntoLoad := bmsConst.vINIT;
+		param.RealEnergy_OutLoad := bmsConst.vINIT;
+		param.RealEnergy_Absolute := bmsConst.vINIT;
+		param.RealEnergy_Signed := bmsConst.vINIT;
+		param.ReactiveEnergy_IntoLoad := bmsConst.vINIT;
+		param.ReactiveEnergy_OutLoad := bmsConst.vINIT;
+		param.ReactiveEnergy_Absolute := bmsConst.vINIT;
+		param.ReactiveEnergy_Signed := bmsConst.vINIT;
+		param.ApparentEnergy_IntoLoad := bmsConst.vINIT;
+		param.ApparentEnergy_OutLoad := bmsConst.vINIT;
+		param.ApparentEnergy := bmsConst.vINIT;
+		param.ApparentEnergy_Delivered_Received := bmsConst.vINIT;
+		param.Frequency := bmsConst.vINIT;
+		param.PowerFactor := bmsConst.vINIT;
+
+		estate := PM_SIMU_WAIT;
+		
+		bOtherdataGood := 	IsGoodData( param.Voltage_LLAvg )
+				AND IsGoodData( param.Current_Avg)
+				AND IsGoodData(	param.Frequency)
+				AND IsGoodData( param.Voltage_AN)
+				AND IsGoodData(	param.Voltage_AB)
+				AND IsGoodData( param.Voltage_BN)
+				AND IsGoodData(	param.Voltage_BC)
+				AND IsGoodData( param.Voltage_CN)
+				AND IsGoodData(	param.Voltage_CA);
+				
+				
+	IF IsGoodData (param.RealEnergy_IntoLoad ) AND bOtherDataGood THEN
+		;// pm.Basic.RealEnergy_IntoLoad still it
+		validEnvergyIntoLoad := param.RealEnergy_IntoLoad;
+	ELSE
+		param.RealEnergy_IntoLoad := validEnvergyIntoLoad;
+	END_IF
+	
+	//round value
+		(*param.RealEnergy_IntoLoad := F_RoundLrealEx(	lrIn 	:= param.RealEnergy_IntoLoad,
+											iPrecision 	:= 0);*)
+													
+		param.PowerFactor := F_RoundLrealEx(	lrIn 	:= param.PowerFactor,
+									iPrecision 	:= 2);
+	
+END_CASE
+
+]]></ST>
+    </Implementation>
+    <Method Name="Constructor" Id="{c79086bd-2071-4c81-afcb-86ac69a06a26}">
+      <Declaration><![CDATA[METHOD Constructor : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[NumInstant := NumInstant + 1;
+SeedDrand := NumInstant;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Name" Id="{628f70b8-4ac1-4d3a-916a-fedc1ef84d1e}">
+      <Declaration><![CDATA[PROPERTY Name : string]]></Declaration>
+      <Get Name="Get" Id="{fa50c61d-61f2-4359-a59b-b590d7744f85}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := sName;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{ac033270-2015-452a-957a-5cdf10009f8e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[sName := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_ApparentEnergy_IntoLoad" Id="{0c987293-d4ce-41d1-85ef-2803dc3d9850}">
+      <Declaration><![CDATA[PROPERTY p_ApparentEnergy_IntoLoad : Lreal]]></Declaration>
+      <Get Name="Get" Id="{dbab9edd-a9b4-43f6-984d-8e9a8aee78ba}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_ApparentEnergy_IntoLoad := ApparentEnergy_IntoLoad;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{64c36692-7a76-4e83-9c6e-2392e27b4f16}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ApparentEnergy_IntoLoad := p_ApparentEnergy_IntoLoad  ;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_ApparentEnergy_OutLoad" Id="{0c0bc9cc-c5ec-4ee7-9608-452f16402d50}">
+      <Declaration><![CDATA[PROPERTY p_ApparentEnergy_OutLoad : Lreal]]></Declaration>
+      <Get Name="Get" Id="{53cfc740-038a-466f-95da-b59f4b1f20ca}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{1e539886-7a7e-40ff-986b-1cae97eb7ec8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ApparentEnergy_OutLoad := p_ApparentEnergy_OutLoad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Current_A" Id="{cc80f427-6ea6-44cf-993d-7e32284399d5}">
+      <Declaration><![CDATA[PROPERTY p_Current_A : Lreal]]></Declaration>
+      <Get Name="Get" Id="{62317a8b-d2f3-49fd-9812-3103218680b6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{75c7a9c6-11bb-4b0c-ae66-baf3e2f684b6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Current_A := p_Current_A;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Current_Avg" Id="{578cad13-b7c2-4fb9-a37f-3a0abc632ffa}">
+      <Declaration><![CDATA[PROPERTY p_Current_Avg : Lreal]]></Declaration>
+      <Get Name="Get" Id="{309e0feb-a2c1-4c3e-bcf4-62190d6570c1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{e4d6a729-5b1b-43f6-bf07-8f7c621ca72b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Current_Avg := p_Current_Avg;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Current_B" Id="{f5ebe287-dba1-4cf9-9aab-9ed6f333f154}">
+      <Declaration><![CDATA[PROPERTY p_Current_B : Lreal]]></Declaration>
+      <Get Name="Get" Id="{0295d5f3-a5ef-48d6-ad8b-eda25f8c7d80}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{37673d98-8709-4465-a1eb-66748a3e5b5f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Current_B := p_Current_B;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Current_C" Id="{c6a6996e-d94b-4044-af53-b39d90de0763}">
+      <Declaration><![CDATA[PROPERTY p_Current_C : Lreal]]></Declaration>
+      <Get Name="Get" Id="{68622348-ebd7-42b3-8b3b-60285321944b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c3053708-9928-4c39-a180-40c876997b91}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Current_C := p_Current_C;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_dentalRealEnergy_IntoLoad" Id="{945ca7cf-eb57-475c-9d0f-b4f88d0e390e}">
+      <Declaration><![CDATA[PROPERTY p_dentalRealEnergy_IntoLoad : Lreal]]></Declaration>
+      <Get Name="Get" Id="{6eb58ef0-a6f5-44bf-a6bb-964ea4a85219}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{8b972117-e3a9-478e-89c5-c07b208e6473}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[dentalRealEnergy_IntoLoad := p_dentalRealEnergy_IntoLoad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_PowerFactor" Id="{9732b167-c866-4747-a565-67c8b1b95e46}">
+      <Declaration><![CDATA[PROPERTY p_PowerFactor : Lreal]]></Declaration>
+      <Get Name="Get" Id="{8fcf53e1-4b9f-4983-a5bd-70d9a0069e52}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{595dfa8c-5e12-4770-aad1-ea71df277689}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PowerFactor := p_PowerFactor;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_ReactiveEnergy_IntoLoad" Id="{faf01f1e-1f3e-4c09-b427-85778f3ddd7e}">
+      <Declaration><![CDATA[PROPERTY p_ReactiveEnergy_IntoLoad : Lreal]]></Declaration>
+      <Get Name="Get" Id="{7b257dd6-5808-4bf7-92f7-d3b2889bcac8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{09861e9c-60eb-4390-adfa-c2ff822c8675}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ReactiveEnergy_IntoLoad := p_ReactiveEnergy_IntoLoad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_ReactiveEnergy_OutLoad" Id="{73b3fb12-5c08-4309-8e8c-6ba2c8186076}">
+      <Declaration><![CDATA[PROPERTY p_ReactiveEnergy_OutLoad : Lreal]]></Declaration>
+      <Get Name="Get" Id="{9c1f554f-22e3-43b0-b31d-1f586d7e9037}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{cdc33426-00bd-4ee1-ad74-8782b28ad90c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ReactiveEnergy_OutLoad := p_ReactiveEnergy_OutLoad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Real_PowerA" Id="{31728b59-032e-4f87-963e-0164269663cc}">
+      <Declaration><![CDATA[PROPERTY p_Real_PowerA : Lreal]]></Declaration>
+      <Get Name="Get" Id="{12d14969-8b6f-4de8-9a39-32d20aaf80ea}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c5ede2a0-d01d-4152-947e-9230181de69f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Real_PowerA := p_Real_PowerA;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Real_PowerB" Id="{bb599006-8597-423c-bafa-15fe3e5f0033}">
+      <Declaration><![CDATA[PROPERTY p_Real_PowerB : Lreal]]></Declaration>
+      <Get Name="Get" Id="{8cc4e925-9fe1-43e2-acbb-c85d1a9482c1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{f920cc11-0d6b-4756-9ae6-3f59f2548c3d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Real_PowerB := p_Real_PowerB;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Real_PowerC" Id="{6b445423-be2a-4ad2-931c-619d738ee75f}">
+      <Declaration><![CDATA[PROPERTY p_Real_PowerC : Lreal]]></Declaration>
+      <Get Name="Get" Id="{6d342d3c-b01f-41b8-adf5-da143a1c1f85}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{357b2bed-ce51-415d-ac0a-71668f273395}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Real_PowerC := p_Real_PowerC;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_Real_PowerTotal" Id="{59974c75-c5c3-43a2-bfa2-3516fb660435}">
+      <Declaration><![CDATA[PROPERTY p_Real_PowerTotal : Lreal]]></Declaration>
+      <Get Name="Get" Id="{c26e4580-2511-4553-ab51-1f9e7d3ffeb4}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{91068706-4ad2-431b-86d8-a413a7a9b485}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Real_PowerTotal := p_Real_PowerTotal;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_RealEnergy_IntoLoad" Id="{c5962a0a-d036-4ebd-a6e4-7079f68ddae7}">
+      <Declaration><![CDATA[PROPERTY p_RealEnergy_IntoLoad : Lreal]]></Declaration>
+      <Get Name="Get" Id="{242532e6-7bcd-460d-8055-ed335a4bf22a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[p_RealEnergy_IntoLoad := RealEnergy_IntoLoad;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c80da2fb-0caf-471b-8f18-212793108091}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RealEnergy_IntoLoad := p_RealEnergy_IntoLoad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="p_RealEnergy_OutLoad" Id="{a208a862-05e3-4bd3-9724-0d75f4962ed4}">
+      <Declaration><![CDATA[PROPERTY p_RealEnergy_OutLoad : Lreal]]></Declaration>
+      <Get Name="Get" Id="{69223407-4188-4cc5-a106-6d305f07fe80}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{36010eae-7bf7-4f31-a5fb-d667c9b6a45e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RealEnergy_OutLoad := p_RealEnergy_OutLoad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Ref_PM" Id="{34ea5392-8aab-47c2-8e99-9057b420bd41}">
+      <Declaration><![CDATA[PROPERTY Ref_PM : Reference to ST_PowerMeter]]></Declaration>
+      <Get Name="Get" Id="{0ee1b266-ec93-4852-93ff-67c2e4e2a63e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{29c11696-c1d9-4a41-867d-1944474fafb1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[PM Ref= Ref_PM;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_PmSimulate">
+      <LineId Id="358" Count="2" />
+      <LineId Id="419" Count="3" />
+      <LineId Id="361" Count="2" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="364" Count="5" />
+      <LineId Id="592" Count="0" />
+      <LineId Id="370" Count="31" />
+      <LineId Id="778" Count="0" />
+      <LineId Id="777" Count="0" />
+      <LineId Id="402" Count="0" />
+      <LineId Id="779" Count="0" />
+      <LineId Id="775" Count="0" />
+      <LineId Id="404" Count="1" />
+      <LineId Id="774" Count="0" />
+      <LineId Id="407" Count="3" />
+      <LineId Id="653" Count="22" />
+      <LineId Id="411" Count="1" />
+      <LineId Id="509" Count="78" />
+      <LineId Id="508" Count="0" />
+      <LineId Id="413" Count="0" />
+      <LineId Id="627" Count="0" />
+      <LineId Id="629" Count="22" />
+      <LineId Id="628" Count="0" />
+      <LineId Id="652" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="626" Count="0" />
+      <LineId Id="602" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.Constructor">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ApparentEnergy_IntoLoad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ApparentEnergy_IntoLoad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ApparentEnergy_OutLoad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ApparentEnergy_OutLoad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_A.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_A.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_Avg.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_Avg.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_B.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_B.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_C.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Current_C.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_dentalRealEnergy_IntoLoad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_dentalRealEnergy_IntoLoad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_PowerFactor.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_PowerFactor.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ReactiveEnergy_IntoLoad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ReactiveEnergy_IntoLoad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ReactiveEnergy_OutLoad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_ReactiveEnergy_OutLoad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerA.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerA.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerB.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerB.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerC.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerC.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerTotal.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_Real_PowerTotal.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_RealEnergy_IntoLoad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_RealEnergy_IntoLoad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_RealEnergy_OutLoad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.p_RealEnergy_OutLoad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.Ref_PM.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PmSimulate.Ref_PM.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

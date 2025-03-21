@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_PM_ION9000_Address" Id="{267934b2-9412-4f36-8492-d93ebc5b43d1}">
+    <Declaration><![CDATA[
+TYPE E_PM_ION9000_Address :
+(
+		
+		//ION9000_E_Current_Unbalane_A :=    3012  
+		//ION9000_E_Current_Unbalane_B :=    3014  
+		//ION9000_E_Current_Unbalane_C :=    3016  
+		ION9000_E_Current_Unbalane_Worst :=    3018,  
+		//ION9000_E_Current_Unbalane_AB :=    3038  
+		//ION9000_E_Current_Unbalane_BC :=    3040  
+		//ION9000_E_Current_Unbalane_CA :=    3042  
+		//ION9000_E_Current_Unbalane_LL_Worst :=    3044  
+		//ION9000_E_Current_Unbalane_AN :=    3046  
+		//ION9000_E_Current_Unbalane_BN :=    3048  
+		//ION9000_E_Current_Unbalane_CN :=    3050  
+		//ION9000_E_Current_Unbalane_LN_Worst:= ,
+		ION9000_E_Voltage_Unbalane_LN_Worst :=    3052,  
+		ION9000_E_Real_PowerA :=    3054  ,
+		ION9000_E_Real_PowerB :=    3056  ,
+		ION9000_E_Real_PowerC :=    3058  ,
+		ION9000_E_Real_PowerTotal :=    3060  ,
+		ION9000_E_Reactive_PowerA :=    3062  ,
+		ION9000_E_Reactive_PowerB :=    3064  ,
+		ION9000_E_Reactive_PowerC :=    3066  ,
+		ION9000_E_Reactive_PowerTotal :=    3068 , 
+		ION9000_E_Apparent_PowerA :=    3070  ,
+		ION9000_E_Apparent_PowerB :=    3072  ,
+		ION9000_E_Apparent_PowerC :=    3074  ,
+		ION9000_E_Apparent_PowerTotal :=    3076  ,
+		ION9000_E_Voltage_AB :=    3020 , 
+		ION9000_E_Voltage_BC :=    3022  ,
+		ION9000_E_Voltage_CA :=    3024  ,
+		ION9000_E_Voltage_LLAvg :=    3026  ,
+		ION9000_E_Voltage_AN :=    3028  ,
+		ION9000_E_Voltage_BN :=    3030  ,
+		ION9000_E_Voltage_CN :=    3032  ,
+		ION9000_E_Voltage_NG	:= 3034,
+		ION9000_E_Voltage_LNAvg :=    3036  ,
+//		ION9000_E_THDF_Voltage_AB :=    22  ,
+//		ION9000_E_THDF_Voltage_BC :=    24  ,
+//		ION9000_E_THDF_Voltage_CA :=    26  ,
+		//ION9000_E_THDF_Voltage_LL :=    28  ,
+		ION9000_E_THDF_Voltage_AN :=    21330, 
+		ION9000_E_THDF_Voltage_BN :=    21332, 
+		ION9000_E_THDF_Voltage_CN :=    21334, 
+		ION9000_E_THDF_Voltage_LN :=    21336,  
+//		ION9000_E_thdR_Voltage_AB :=    40,  
+//		ION9000_E_thdR_Voltage_BC :=    42,  
+//		ION9000_E_thdR_Voltage_CA :=    44 , 
+//		ION9000_E_thdR_Voltage_LL :=    45 , 
+//		ION9000_E_thdR_Voltage_AN :=    48 , 
+//		ION9000_E_thdR_Voltage_BN :=    50 , 
+//		ION9000_E_thdR_Voltage_CN :=    52 , 
+//		ION9000_E_thdR_Voltage_LN :=    56 , 
+		ION9000_E_Current_A :=    3000 , 
+		ION9000_E_Current_B :=    3002,  
+		ION9000_E_Current_C :=    3004  ,
+		ION9000_E_Current_N :=    3006 , 
+		ION9000_E_Current_G :=    3008  ,
+		ION9000_E_Current_Avg :=    3010 , 
+		ION9000_E_THDF_Current_A :=    21300 , 
+		ION9000_E_THDF_Current_B :=  	21302, 
+		ION9000_E_THDF_Current_C :=   21304  ,
+		ION9000_E_THDF_Current_N :=    21306, 
+		ION9000_E_THDF_Current_G :=   21308  ,
+//		ION9000_E_thdR_Current_A :=    10  ,
+//		ION9000_E_thdR_Current_B :=    12  ,
+//		ION9000_E_thdR_Current_C :=    14  ,
+//		ION9000_E_thdR_Current_N :=    16  ,
+//		ION9000_E_thdR_Current_G :=    18  ,
+//		ION9000_E_Total_Demand_Distortion :=    20  
+		ION9000_E_RealEnergy_IntoLoad :=    3204  ,
+		ION9000_E_RealEnergy_OutLoad :=    3208 , 
+		ION9000_E_RealEnergy_Absolute :=    3212  ,
+		ION9000_E_RealEnergy_Signed :=    3216  ,
+		ION9000_E_ReactiveEnergy_IntoLoad :=    3220 , 
+		ION9000_E_ReactiveEnergy_OutLoad :=    3224  ,
+		ION9000_E_ReactiveEnergy_Absolute :=    3228  ,
+		ION9000_E_ReactiveEnergy_Signed :=    3232  ,
+		ION9000_E_ApparentEnergy_IntoLoad :=    3236  ,
+		ION9000_E_ApparentEnergy_OutLoad :=    3240  ,
+		ION9000_E_ApparentEnergy :=    3244  ,
+		ION9000_E_ApparentEnergy_Delivered_Received :=    3248  ,
+		ION9000_E_Frequency :=    3110  ,
+		ION9000_E_PowerFactor :=    3150
+	
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

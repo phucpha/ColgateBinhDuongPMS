@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Task Name="PersistanceData" Id="{7a0a6e1a-fec9-4ad9-9b68-82abefceede1}">
+    <!--CycleTime in micro seconds.-->
+    <CycleTime>2000</CycleTime>
+    <Priority>2</Priority>
+    <PouCall>
+      <Name>Prg_Persistance</Name>
+    </PouCall>
+    <TaskFBGuid>{86db7447-9d10-4793-b462-8b5e24f43c13}</TaskFBGuid>
+    <Fb_init>{d9e11aa8-bdc2-4ade-adfe-c0d203f003fc}</Fb_init>
+    <Fb_exit>{8ff26ae1-f18b-4765-a4a7-363b6e27bd32}</Fb_exit>
+    <CycleUpdate>{03591172-42cc-41fe-8377-0bcd3ca21216}</CycleUpdate>
+    <PostCycleUpdate>{4e1f17a5-c75c-466e-a403-55965d10bacf}</PostCycleUpdate>
+  </Task>
+</TcPlcObject>

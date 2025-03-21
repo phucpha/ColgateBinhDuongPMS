@@ -1,0 +1,799 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="PmReport2" Id="{f87281e8-a82d-4af1-985b-fe2209163fd4}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PmReport2
+VAR
+	arCalculateEnergy_1H : ARRAY [0..pmDev.numAllMeter-1] OF FB_CalCulateAccumulation;
+	arFIFOEnergy_1H		 : ARRAY [0..pmDev.numAllMeter-1] OF FB_FIFO_Lreal;
+	arCalculateEnergy_1D : ARRAY [0..pmDev.numAllMeter-1] OF FB_CalCulateAccumulation;
+	arFIFOEnergy_1D 	 : ARRAY [0..pmDev.numAllMeter-1] OF FB_FIFO_Lreal;
+	FIFOEnergyTimestruct_1H :  FB_FIFO_TimeStruct;
+	FIFOEnergyTimestruct_1D :  FB_FIFO_TimeStruct;
+	AllInitSuccessful : BOOL := TRUE;
+	iloop  : UINT;
+	eState	: UINT;
+	tonPrepareValue: TON;
+	tTimePrepareValue: TIME := t#2S;
+END_VAR
+VAR CONSTANT
+	STATE_INIT 							: UINT := 0;
+	STATE_RUN							: UINT := 10;
+	STATE_REPORT_WAIT 					: UINT := 0;
+	STATE_REPORT_ENERGY_HOUR_REQUEST 	: UINT := 10;
+	STATE_REPORT_ENERGY_HOUR_ACTIVE_REQUEST	:UINT := 15;
+	STATE_REPORT_ENERGY_HOUR_WAIT_ACK		: UINT := 20;
+	
+	STATE_REPORT_ENERGY_DAY_REQUEST 	: UINT := 50;
+	STATE_REPORT_ENERGY_DAY_ACTIVE_REQUEST	:UINT := 55;
+	STATE_REPORT_ENERGY_DAY_WAIT_ACK			: UINT := 60;
+END_VAR
+VAR PERSISTENT 
+	
+	eStateReport : UINT;
+	bEnergyReportHourEvent : BOOL;// is true if IPC request Report Energy HOUR to AVEVA, FALSE if AVEVA Ack processed The data
+	bEnergyReportDayEvent : BOOL;// is true if IPC request Report Energy DAY to AVEVA, FALSE if AVEVA Ack processed The data
+	sDateAndTimeReportAveva : STRING;
+	sMsReportAveva			: STRING;
+	
+	// virtual object
+	////Power Virtual Meter	// new require 19/07	
+		MaySayKhi			: 	LREAL;
+		OilCoolingPump		: 	LREAL;
+		LightNVO			: 	LREAL;
+		CP_WHEF1            : 	LREAL;
+		CP_WHEF2            :	LREAL;
+		DB_FIC              :	LREAL;
+	
+	// date 2508
+	//Machine
+		PKG_HoongA			: 	LREAL;
+		PKG_Other			: 	LREAL;
+		TE_Tufting			: 	LREAL;
+		TE_End				:	LREAL;
+		IM_VIM				: 	LREAL;
+		IM_HIM				: 	LREAL;
+		MIXING				: 	LREAL;
+		LIGHTING_IM			: 	LREAL;
+		LIGHTING_PKG_TE		: 	LREAL;
+		AIRCOMP1       : LREAL;
+		AIRCOMP2       : LREAL;
+		AIRCOMP3       : LREAL;
+		AIRCOMP4       : LREAL;
+		AIRCOMP5       : LREAL;
+		BLISTER_FORMING       : LREAL;
+		LIGHTING_BLISTER       : LREAL;
+		CHILLER4       : LREAL;
+		CHILLER5       : LREAL;
+		CHILLER6       : LREAL;
+		OIL_COOLING       : LREAL;
+		TE_AFT       : LREAL;
+		TE_HEPTA       : LREAL;
+		TE_FREXILINE       : LREAL;
+		OFFICE_GROUND       : LREAL;
+		OFFICE_1       : LREAL;
+		CANTEEN       : LREAL;
+		SECURITY_FONT       : LREAL;
+		SECURITY_BACK       : LREAL;
+		LIGHTING_RM       : LREAL;
+		LIGHTING_FG       : LREAL;
+	//Area
+		PKG       : LREAL;
+		TE       : LREAL;
+		IM       : LREAL;
+		AreaMixing       : LREAL;
+		Lighting       : LREAL;
+		Aircomp       : LREAL;
+		HVACAHU       : LREAL;
+		GROUND       : LREAL;
+		Layer1       : LREAL;
+		HVAC       : LREAL;
+		Kit        : LREAL;
+		Chiller       : LREAL;
+		Other       : LREAL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+CASE eState OF
+	STATE_INIT:
+		Init();
+	STATE_RUN:
+		Run();
+	;
+	
+END_CASE]]></ST>
+    </Implementation>
+    <Method Name="CalculateVirtualObject" Id="{40b3b91c-dcc2-4f48-8b70-dd4ee667bba1}">
+      <Declaration><![CDATA[METHOD CalculateVirtualObject : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[///require 25/08	
+	//Area
+		PKG   :=	arFIFOEnergy_1D[ DB1].OldestData
+												+arFIFOEnergy_1D[ DB2].OldestData
+												+arFIFOEnergy_1D[ DB11].OldestData ;
+												
+		TE    := arFIFOEnergy_1D[ DB3].OldestData
+												+arFIFOEnergy_1D[ DB10].OldestData
+												+arFIFOEnergy_1D[ DB12].OldestData;
+												
+		IM    := arFIFOEnergy_1D[ DB4].OldestData
+												+arFIFOEnergy_1D[ DB5].OldestData
+												+arFIFOEnergy_1D[ DB6].OldestData
+												+arFIFOEnergy_1D[ DB7].OldestData
+												+arFIFOEnergy_1D[ DB8].OldestData
+												+arFIFOEnergy_1D[ DB9].OldestData;
+												
+		AreaMixing   := arFIFOEnergy_1D[ DB_MR].OldestData;
+		Lighting     := arFIFOEnergy_1D[ LP_PR1A].OldestData
+														+arFIFOEnergy_1D[ LP_PR1B].OldestData
+														+arFIFOEnergy_1D[ LP_PR2A].OldestData
+														+arFIFOEnergy_1D[ LP_PR2B].OldestData
+														+arFIFOEnergy_1D[ LP_PR3A].OldestData
+														+arFIFOEnergy_1D[ LP_PR3B].OldestData
+														+arFIFOEnergy_1D[ LP_PR4A].OldestData
+														+arFIFOEnergy_1D[ LP_PR4B].OldestData
+														+arFIFOEnergy_1D[ LP_BM].OldestData
+														+arFIFOEnergy_1D[ LP_WH1].OldestData
+														+arFIFOEnergy_1D[ LP_WH2].OldestData
+														+arFIFOEnergy_1D[ LP_PR5A].OldestData
+														+arFIFOEnergy_1D[ LP_PR5B].OldestData
+														+arFIFOEnergy_1D[ LP_PR6A].OldestData
+														+arFIFOEnergy_1D[ LP_PR6B].OldestData;
+														
+		Aircomp   := arFIFOEnergy_1D[ DB_AIRCOMP].OldestData;
+		HVACAHU   := arFIFOEnergy_1D[ DB_AHU].OldestData;
+		GROUND    := arFIFOEnergy_1D[ DB_OFF1].OldestData;
+		Layer1    := arFIFOEnergy_1D[ DB_OFF2].OldestData;
+		HVAC      := arFIFOEnergy_1D[ DB_MVAC1].OldestData;
+		Kit       := arFIFOEnergy_1D[ DB_kit].OldestData;
+		Chiller   := arFIFOEnergy_1D[ DB_MVAC2].OldestData;
+		Other     := arFIFOEnergy_1D[ LV01].OldestData
+														+arFIFOEnergy_1D[ LV02].OldestData
+														+arFIFOEnergy_1D[ LV03].OldestData
+														+arFIFOEnergy_1D[ LV04].OldestData;
+	//Machine
+		PKG_HoongA         :=    arFIFOEnergy_1D[ DB1_1].OldestData
+																+arFIFOEnergy_1D[ DB2_1].OldestData
+																+arFIFOEnergy_1D[ DB11_1].OldestData;
+																		
+		PKG_Other      :=   arFIFOEnergy_1D[ DB1_2].OldestData
+																+arFIFOEnergy_1D[ DB2_2].OldestData
+																+arFIFOEnergy_1D[ DB11_2].OldestData;
+		TE_Tufting     :=   arFIFOEnergy_1D[ DB3_1].OldestData
+																+arFIFOEnergy_1D[ DB10_1].OldestData
+																+arFIFOEnergy_1D[ DB12_1].OldestData;
+		TE_End         :=   arFIFOEnergy_1D[ DB3_2].OldestData
+																+arFIFOEnergy_1D[ DB10_2].OldestData
+																+arFIFOEnergy_1D[ DB12_2].OldestData;
+		IM_VIM         :=   arFIFOEnergy_1D[ DB4_1].OldestData
+																+arFIFOEnergy_1D[ DB5_1].OldestData
+																+arFIFOEnergy_1D[ DB6_1].OldestData
+																+arFIFOEnergy_1D[ DB7_1].OldestData
+																+arFIFOEnergy_1D[ DB8_1].OldestData
+																+arFIFOEnergy_1D[ DB9_1].OldestData;
+		IM_HIM         :=    arFIFOEnergy_1D[ DB4_2].OldestData
+																+arFIFOEnergy_1D[ DB5_2].OldestData
+																+arFIFOEnergy_1D[ DB6_2].OldestData
+																+arFIFOEnergy_1D[ DB7_2].OldestData
+																+arFIFOEnergy_1D[ DB8_2].OldestData
+																+arFIFOEnergy_1D[ DB9_2].OldestData
+																+arFIFOEnergy_1D[ DB14_2].OldestData
+																+arFIFOEnergy_1D[ DB15_2].OldestData
+																+arFIFOEnergy_1D[ DB13_2].OldestData;
+																
+		MIXING         :=    arFIFOEnergy_1D[ DB_MR].OldestData;
+		LIGHTING_IM    :=    arFIFOEnergy_1D[ LP_PR1A].OldestData
+																+arFIFOEnergy_1D[ LP_PR1B].OldestData
+																+arFIFOEnergy_1D[ LP_PR3A].OldestData
+																+arFIFOEnergy_1D[ LP_PR3B].OldestData
+																+arFIFOEnergy_1D[ LP_PR5A].OldestData
+																+arFIFOEnergy_1D[ LP_PR5B].OldestData;
+																
+		LIGHTING_PKG_TE  :=  arFIFOEnergy_1D[ LP_PR4A].OldestData
+																+arFIFOEnergy_1D[ LP_PR4B].OldestData
+																+arFIFOEnergy_1D[ LP_PR2A].OldestData
+																+arFIFOEnergy_1D[ LP_PR2B].OldestData
+																+arFIFOEnergy_1D[ LP_PR6A].OldestData
+																+arFIFOEnergy_1D[ LP_PR6B].OldestData;
+																
+		AIRCOMP1         :=          arFIFOEnergy_1D[ A1].OldestData;
+		AIRCOMP2         :=          arFIFOEnergy_1D[ A2].OldestData;
+		AIRCOMP3         :=          arFIFOEnergy_1D[ A3].OldestData;
+		AIRCOMP4         :=          arFIFOEnergy_1D[ A4].OldestData;
+		AIRCOMP5         :=          arFIFOEnergy_1D[ A5].OldestData;
+		BLISTER_FORMING         :=          arFIFOEnergy_1D[ DB_BM].OldestData;
+		LIGHTING_BLISTER         :=          arFIFOEnergy_1D[ LP_BM].OldestData;
+		CHILLER4         :=          arFIFOEnergy_1D[ CH4].OldestData;
+		CHILLER5         :=          arFIFOEnergy_1D[ CH5].OldestData;
+		CHILLER6         :=          arFIFOEnergy_1D[ CH6].OldestData;
+		OIL_COOLING         :=          arFIFOEnergy_1D[ DB_MVAC1].OldestData;
+		TE_AFT         :=          arFIFOEnergy_1D[ DB13_1].OldestData;
+		TE_HEPTA         :=          arFIFOEnergy_1D[ DB14_1].OldestData;
+		TE_FREXILINE         :=          arFIFOEnergy_1D[ DB15_1].OldestData;
+		OFFICE_GROUND         :=          arFIFOEnergy_1D[ DB_OFF1].OldestData;
+		OFFICE_1         :=          arFIFOEnergy_1D[ DB_OFF2].OldestData;
+		CANTEEN         :=          arFIFOEnergy_1D[ DB_KIT].OldestData;
+		SECURITY_FONT         :=          arFIFOEnergy_1D[ LP_EL1].OldestData;
+		SECURITY_BACK         :=          arFIFOEnergy_1D[ LP_EL2].OldestData;
+		LIGHTING_RM         :=          arFIFOEnergy_1D[ LP_WH1].OldestData;
+		LIGHTING_FG         :=          arFIFOEnergy_1D[ LP_WH2].OldestData;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Init" Id="{4f1b42e8-fb39-475d-8e20-8f82a8868d68}">
+      <Declaration><![CDATA[METHOD Init : BOOL
+VAR_INPUT
+END_VAR
+VAR 
+	iloop : UINT;
+	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// naming
+	//arCalculateEnergy_1H
+		arCalculateEnergy_1H[LV01].Name := 'LV01';
+		arCalculateEnergy_1H[DB_PR1_1].Name := 'DB_PR1_1';
+		arCalculateEnergy_1H[DB1].Name := 'DB1';
+		arCalculateEnergy_1H[DB2].Name := 'DB2';
+		arCalculateEnergy_1H[DB3].Name := 'DB3';
+		arCalculateEnergy_1H[DB4].Name := 'DB4';
+		arCalculateEnergy_1H[DB1_1].Name := 'DB1_1';
+		arCalculateEnergy_1H[DB2_1].Name := 'DB2_1';
+		arCalculateEnergy_1H[DB3_1].Name := 'DB3_1';
+		arCalculateEnergy_1H[DB4_1].Name := 'DB4_1';
+		arCalculateEnergy_1H[DB5].Name := 'DB5';
+		arCalculateEnergy_1H[DB6].Name := 'DB6';
+		arCalculateEnergy_1H[DB7].Name := 'DB7';
+		arCalculateEnergy_1H[DB_MR].Name := 'DB_MR';
+		arCalculateEnergy_1H[DB5_1].Name := 'DB5_1';
+		arCalculateEnergy_1H[DB6_1].Name := 'DB6_1';
+		arCalculateEnergy_1H[DB7_1].Name := 'DB7_1';
+		arCalculateEnergy_1H[LV02].Name := 'LV02';
+		arCalculateEnergy_1H[DB_PR1_2].Name := 'DB_PR1_2';
+		arCalculateEnergy_1H[DB_AIRCOMP].Name := 'DB_AIRCOMP';
+		arCalculateEnergy_1H[DB_AHU].Name := 'DB_AHU';
+		arCalculateEnergy_1H[DB8].Name := 'DB8';
+		arCalculateEnergy_1H[DB9].Name := 'DB9';
+		arCalculateEnergy_1H[DB10].Name := 'DB10';
+		arCalculateEnergy_1H[DB8_1].Name := 'DB8_1';
+		arCalculateEnergy_1H[DB9_1].Name := 'DB9_1';
+		arCalculateEnergy_1H[DB10_1].Name := 'DB10_1';
+		arCalculateEnergy_1H[A1].Name := 'A1';
+		arCalculateEnergy_1H[A2].Name := 'A2';
+		arCalculateEnergy_1H[A3].Name := 'A3';
+		arCalculateEnergy_1H[A4].Name := 'A4';
+		arCalculateEnergy_1H[A5].Name := 'A5';
+		arCalculateEnergy_1H[LP_PR1A].Name := 'LP_PR1A';
+		arCalculateEnergy_1H[LP_PR1B].Name := 'LP_PR1B';
+		arCalculateEnergy_1H[LP_PR2A].Name := 'LP_PR2A';
+		arCalculateEnergy_1H[LP_PR2B].Name := 'LP_PR2B';
+		arCalculateEnergy_1H[LP_PR3A].Name := 'LP_PR3A';
+		arCalculateEnergy_1H[DB_WH].Name := 'DB_WH';
+		arCalculateEnergy_1H[LP_PR3B].Name := 'LP_PR3B';
+		arCalculateEnergy_1H[LP_PR4A].Name := 'LP_PR4A';
+		arCalculateEnergy_1H[LP_PR4B].Name := 'LP_PR4B';
+		arCalculateEnergy_1H[LP_BM].Name := 'LP_BM';
+		arCalculateEnergy_1H[DB_BM].Name := 'DB_BM';
+		arCalculateEnergy_1H[LV03].Name := 'LV03';
+		arCalculateEnergy_1H[DB_MVAC1].Name := 'DB_MVAC1';
+		arCalculateEnergy_1H[DB_MVAC2].Name := 'DB_MVAC2';
+		arCalculateEnergy_1H[DB_OFF2].Name := 'DB_OFF2';
+		arCalculateEnergy_1H[LP_EL1].Name := 'LP_EL1';
+		arCalculateEnergy_1H[LP_EL2].Name := 'LP_EL2';
+		arCalculateEnergy_1H[DB_OFF1].Name := 'DB_OFF1';
+		arCalculateEnergy_1H[DB_KIT].Name := 'DB_KIT';
+		arCalculateEnergy_1H[LP_WH2].Name := 'LP_WH2';
+		arCalculateEnergy_1H[LP_WH1].Name := 'LP_WH1';
+		arCalculateEnergy_1H[CH4].Name := 'CH4';
+		arCalculateEnergy_1H[CH5].Name := 'CH5';
+		arCalculateEnergy_1H[CH6].Name := 'CH6';
+		arCalculateEnergy_1H[LV04].Name := 'LV04';
+		arCalculateEnergy_1H[DB_PR2].Name := 'DB_PR2';
+		arCalculateEnergy_1H[DB11].Name := 'DB11';
+		arCalculateEnergy_1H[DB12].Name := 'DB12';
+		arCalculateEnergy_1H[DB13].Name := 'DB13';
+		arCalculateEnergy_1H[DB14].Name := 'DB14';
+		arCalculateEnergy_1H[DB11_1].Name := 'DB11_1';
+		arCalculateEnergy_1H[DB12_1].Name := 'DB12_1';
+		arCalculateEnergy_1H[DB13_1].Name := 'DB13_1';
+		arCalculateEnergy_1H[DB14_1].Name := 'DB14_1';
+		arCalculateEnergy_1H[DB15].Name := 'DB15';
+		arCalculateEnergy_1H[DB15_1].Name := 'DB15_1';
+		arCalculateEnergy_1H[LP_PR5A].Name := 'LP_PR5A';
+		arCalculateEnergy_1H[LP_PR5B].Name := 'LP_PR5B';
+		arCalculateEnergy_1H[LP_PR6A].Name := 'LP_PR6A';
+		arCalculateEnergy_1H[LP_PR6B].Name := 'LP_PR6B';
+		arCalculateEnergy_1H[DB1_2].Name := 'DB1_2';
+		arCalculateEnergy_1H[DB2_2].Name := 'DB2_2';
+		arCalculateEnergy_1H[DB3_2].Name := 'DB3_2';
+		arCalculateEnergy_1H[DB4_2].Name := 'DB4_2';
+		arCalculateEnergy_1H[DB5_2].Name := 'DB5_2';
+		arCalculateEnergy_1H[DB6_2].Name := 'DB6_2';
+		arCalculateEnergy_1H[DB7_2].Name := 'DB7_2';
+		arCalculateEnergy_1H[DB8_2].Name := 'DB8_2';
+		arCalculateEnergy_1H[DB9_2].Name := 'DB9_2';
+		arCalculateEnergy_1H[DB10_2].Name := 'DB10_2';
+		arCalculateEnergy_1H[DB11_2].Name := 'DB11_2';
+		arCalculateEnergy_1H[DB12_2].Name := 'DB12_2';
+		arCalculateEnergy_1H[DB13_2].Name := 'DB13_2';
+		arCalculateEnergy_1H[DB14_2].Name := 'DB14_2';
+		arCalculateEnergy_1H[DB15_2].Name := 'DB15_2';
+		
+	//arCalculateEnergy_1D
+		arCalculateEnergy_1D[LV01].Name := 'LV01';
+		arCalculateEnergy_1D[DB_PR1_1].Name := 'DB_PR1_1';
+		arCalculateEnergy_1D[DB1].Name := 'DB1';
+		arCalculateEnergy_1D[DB2].Name := 'DB2';
+		arCalculateEnergy_1D[DB3].Name := 'DB3';
+		arCalculateEnergy_1D[DB4].Name := 'DB4';
+		arCalculateEnergy_1D[DB1_1].Name := 'DB1_1';
+		arCalculateEnergy_1D[DB2_1].Name := 'DB2_1';
+		arCalculateEnergy_1D[DB3_1].Name := 'DB3_1';
+		arCalculateEnergy_1D[DB4_1].Name := 'DB4_1';
+		arCalculateEnergy_1D[DB5].Name := 'DB5';
+		arCalculateEnergy_1D[DB6].Name := 'DB6';
+		arCalculateEnergy_1D[DB7].Name := 'DB7';
+		arCalculateEnergy_1D[DB_MR].Name := 'DB_MR';
+		arCalculateEnergy_1D[DB5_1].Name := 'DB5_1';
+		arCalculateEnergy_1D[DB6_1].Name := 'DB6_1';
+		arCalculateEnergy_1D[DB7_1].Name := 'DB7_1';
+		arCalculateEnergy_1D[LV02].Name := 'LV02';
+		arCalculateEnergy_1D[DB_PR1_2].Name := 'DB_PR1_2';
+		arCalculateEnergy_1D[DB_AIRCOMP].Name := 'DB_AIRCOMP';
+		arCalculateEnergy_1D[DB_AHU].Name := 'DB_AHU';
+		arCalculateEnergy_1D[DB8].Name := 'DB8';
+		arCalculateEnergy_1D[DB9].Name := 'DB9';
+		arCalculateEnergy_1D[DB10].Name := 'DB10';
+		arCalculateEnergy_1D[DB8_1].Name := 'DB8_1';
+		arCalculateEnergy_1D[DB9_1].Name := 'DB9_1';
+		arCalculateEnergy_1D[DB10_1].Name := 'DB10_1';
+		arCalculateEnergy_1D[A1].Name := 'A1';
+		arCalculateEnergy_1D[A2].Name := 'A2';
+		arCalculateEnergy_1D[A3].Name := 'A3';
+		arCalculateEnergy_1D[A4].Name := 'A4';
+		arCalculateEnergy_1D[A5].Name := 'A5';
+		arCalculateEnergy_1D[LP_PR1A].Name := 'LP_PR1A';
+		arCalculateEnergy_1D[LP_PR1B].Name := 'LP_PR1B';
+		arCalculateEnergy_1D[LP_PR2A].Name := 'LP_PR2A';
+		arCalculateEnergy_1D[LP_PR2B].Name := 'LP_PR2B';
+		arCalculateEnergy_1D[LP_PR3A].Name := 'LP_PR3A';
+		arCalculateEnergy_1D[DB_WH].Name := 'DB_WH';
+		arCalculateEnergy_1D[LP_PR3B].Name := 'LP_PR3B';
+		arCalculateEnergy_1D[LP_PR4A].Name := 'LP_PR4A';
+		arCalculateEnergy_1D[LP_PR4B].Name := 'LP_PR4B';
+		arCalculateEnergy_1D[LP_BM].Name := 'LP_BM';
+		arCalculateEnergy_1D[DB_BM].Name := 'DB_BM';
+		arCalculateEnergy_1D[LV03].Name := 'LV03';
+		arCalculateEnergy_1D[DB_MVAC1].Name := 'DB_MVAC1';
+		arCalculateEnergy_1D[DB_MVAC2].Name := 'DB_MVAC2';
+		arCalculateEnergy_1D[DB_OFF2].Name := 'DB_OFF2';
+		arCalculateEnergy_1D[LP_EL1].Name := 'LP_EL1';
+		arCalculateEnergy_1D[LP_EL2].Name := 'LP_EL2';
+		arCalculateEnergy_1D[DB_OFF1].Name := 'DB_OFF1';
+		arCalculateEnergy_1D[DB_KIT].Name := 'DB_KIT';
+		arCalculateEnergy_1D[LP_WH2].Name := 'LP_WH2';
+		arCalculateEnergy_1D[LP_WH1].Name := 'LP_WH1';
+		arCalculateEnergy_1D[CH4].Name := 'CH4';
+		arCalculateEnergy_1D[CH5].Name := 'CH5';
+		arCalculateEnergy_1D[CH6].Name := 'CH6';
+		arCalculateEnergy_1D[LV04].Name := 'LV04';
+		arCalculateEnergy_1D[DB_PR2].Name := 'DB_PR2';
+		arCalculateEnergy_1D[DB11].Name := 'DB11';
+		arCalculateEnergy_1D[DB12].Name := 'DB12';
+		arCalculateEnergy_1D[DB13].Name := 'DB13';
+		arCalculateEnergy_1D[DB14].Name := 'DB14';
+		arCalculateEnergy_1D[DB11_1].Name := 'DB11_1';
+		arCalculateEnergy_1D[DB12_1].Name := 'DB12_1';
+		arCalculateEnergy_1D[DB13_1].Name := 'DB13_1';
+		arCalculateEnergy_1D[DB14_1].Name := 'DB14_1';
+		arCalculateEnergy_1D[DB15].Name := 'DB15';
+		arCalculateEnergy_1D[DB15_1].Name := 'DB15_1';
+		arCalculateEnergy_1D[LP_PR5A].Name := 'LP_PR5A';
+		arCalculateEnergy_1D[LP_PR5B].Name := 'LP_PR5B';
+		arCalculateEnergy_1D[LP_PR6A].Name := 'LP_PR6A';
+		arCalculateEnergy_1D[LP_PR6B].Name := 'LP_PR6B';
+		arCalculateEnergy_1D[DB1_2].Name := 'DB1_2';
+		arCalculateEnergy_1D[DB2_2].Name := 'DB2_2';
+		arCalculateEnergy_1D[DB3_2].Name := 'DB3_2';
+		arCalculateEnergy_1D[DB4_2].Name := 'DB4_2';
+		arCalculateEnergy_1D[DB5_2].Name := 'DB5_2';
+		arCalculateEnergy_1D[DB6_2].Name := 'DB6_2';
+		arCalculateEnergy_1D[DB7_2].Name := 'DB7_2';
+		arCalculateEnergy_1D[DB8_2].Name := 'DB8_2';
+		arCalculateEnergy_1D[DB9_2].Name := 'DB9_2';
+		arCalculateEnergy_1D[DB10_2].Name := 'DB10_2';
+		arCalculateEnergy_1D[DB11_2].Name := 'DB11_2';
+		arCalculateEnergy_1D[DB12_2].Name := 'DB12_2';
+		arCalculateEnergy_1D[DB13_2].Name := 'DB13_2';
+		arCalculateEnergy_1D[DB14_2].Name := 'DB14_2';
+		arCalculateEnergy_1D[DB15_2].Name := 'DB15_2';
+// set period time calculate
+	// hour
+		FOR iloop := 0 TO pmDev.numAllMeter - 1 DO
+			arCalculateEnergy_1H[iloop].TimeAccumulate := NEW_HOUR;
+		END_FOR
+	// day
+		FOR iloop := 0 TO pmDev.numAllMeter - 1 DO
+			arCalculateEnergy_1D[iloop].TimeAccumulate := NEW_DAY;
+		END_FOR
+// Init calculate
+		FOR iloop := 0 TO pmDev.numAllMeter - 1 DO
+			arCalculateEnergy_1H[iloop].MR_Init();
+		END_FOR
+// Init Calculate Day
+		FOR iloop := 0 TO pmDev.numAllMeter - 1 DO
+			arCalculateEnergy_1D[iloop].MR_Init ();
+		END_FOR
+// check Init ok calculate
+		FOR iloop := 0 TO pmDev.numAllMeter - 1 DO
+			IF NOT arCalculateEnergy_1H[iloop].isRuning THEN
+				AllInitSuccessful := FALSE;
+			END_IF
+		END_FOR
+// check Init ok  Calculate Day
+		FOR iloop := 0 TO pmDev.numAllMeter - 1 DO
+			IF NOT arCalculateEnergy_1D[iloop].isRuning THEN
+				AllInitSuccessful := FALSE;
+			END_IF
+		END_FOR
+// 	change step
+		IF AllInitSuccessful THEN
+			eState := STATE_RUN;
+		END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Run" Id="{2cfa4431-64a0-477a-9a0e-5315ce0b1a6a}">
+      <Declaration><![CDATA[METHOD Run : BOOL
+VAR_INPUT
+END_VAR
+VAR 
+	iLoop : UINT;
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// calculate Hour
+	arCalculateEnergy_1H[LV01]( lrAccumulator := pmDev.DB07_01_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_PR1_1]( lrAccumulator := pmDev.DB06_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB1]( lrAccumulator := pmDev.DB05_10_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB2]( lrAccumulator := pmDev.DB04_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB3]( lrAccumulator := pmDev.DB04_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB4]( lrAccumulator := pmDev.DB04_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB1_1]( lrAccumulator := pmDev.DB05_09_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB2_1]( lrAccumulator := pmDev.DB04_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB3_1]( lrAccumulator := pmDev.DB04_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB4_1]( lrAccumulator := pmDev.DB04_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB5]( lrAccumulator := pmDev.DB03_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB6]( lrAccumulator := pmDev.DB03_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB7]( lrAccumulator := pmDev.DB03_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_MR]( lrAccumulator := pmDev.DB06_11_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB5_1]( lrAccumulator := pmDev.DB03_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB6_1]( lrAccumulator := pmDev.DB03_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB7_1]( lrAccumulator := pmDev.DB03_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LV02]( lrAccumulator := pmDev.DB07_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_PR1_2]( lrAccumulator := pmDev.DB06_05_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_AIRCOMP]( lrAccumulator := pmDev.DB07_03_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_AHU]( lrAccumulator := pmDev.DB06_07_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB8]( lrAccumulator := pmDev.DB05_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB9]( lrAccumulator := pmDev.DB05_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB10]( lrAccumulator := pmDev.DB05_08_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB8_1]( lrAccumulator := pmDev.DB05_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB9_1]( lrAccumulator := pmDev.DB05_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB10_1]( lrAccumulator := pmDev.DB05_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[A1]( lrAccumulator := pmDev.DB07_06_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[A2]( lrAccumulator := pmDev.DB07_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[A3]( lrAccumulator := pmDev.DB07_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[A4]( lrAccumulator := pmDev.DB07_09_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[A5]( lrAccumulator := pmDev.DB07_10_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR1A]( lrAccumulator := pmDev.DB05_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR1B]( lrAccumulator := pmDev.DB05_02_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR2A]( lrAccumulator := pmDev.DB05_22_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR2B]( lrAccumulator := pmDev.DB05_21_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR3A]( lrAccumulator := pmDev.DB03_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_WH]( lrAccumulator := pmDev.DB01_18_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR3B]( lrAccumulator := pmDev.DB03_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR4A]( lrAccumulator := pmDev.DB04_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR4B]( lrAccumulator := pmDev.DB04_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_BM]( lrAccumulator := pmDev.DB01_20_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_BM]( lrAccumulator := pmDev.DB01_22_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LV03]( lrAccumulator := pmDev.DB06_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_MVAC1]( lrAccumulator := pmDev.DB07_05_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_MVAC2]( lrAccumulator := pmDev.DB07_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_OFF2]( lrAccumulator := pmDev.DB06_38_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_EL1]( lrAccumulator := pmDev.DB06_03_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_EL2]( lrAccumulator := pmDev.DB06_01_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_OFF1]( lrAccumulator := pmDev.DB06_08_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_KIT]( lrAccumulator := pmDev.DB06_33_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_WH2]( lrAccumulator := pmDev.DB01_12_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_WH1]( lrAccumulator := pmDev.DB01_11_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[CH4]( lrAccumulator := pmDev.DB07_11_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[CH5]( lrAccumulator := pmDev.DB07_12_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[CH6]( lrAccumulator := pmDev.DB07_13_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LV04]( lrAccumulator := pmDev.DB06_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB_PR2]( lrAccumulator := pmDev.DB01_07_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB11]( lrAccumulator := pmDev.DB01_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB12]( lrAccumulator := pmDev.DB01_01_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB13]( lrAccumulator := pmDev.DB02_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB14]( lrAccumulator := pmDev.DB02_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB11_1]( lrAccumulator := pmDev.DB01_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB12_1]( lrAccumulator := pmDev.DB01_02_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB13_1]( lrAccumulator := pmDev.DB02_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB14_1]( lrAccumulator := pmDev.DB02_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB15]( lrAccumulator := pmDev.DB02_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB15_1]( lrAccumulator := pmDev.DB02_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR5A]( lrAccumulator := pmDev.DB02_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR5B]( lrAccumulator := pmDev.DB02_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR6A]( lrAccumulator := pmDev.DB01_06_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[LP_PR6B]( lrAccumulator := pmDev.DB01_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB1_2]( lrAccumulator := pmDev.PowerMeter_DB1_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB2_2]( lrAccumulator := pmDev.PowerMeter_DB2_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB3_2]( lrAccumulator := pmDev.PowerMeter_DB3_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB4_2]( lrAccumulator := pmDev.PowerMeter_DB4_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB5_2]( lrAccumulator := pmDev.PowerMeter_DB5_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB6_2]( lrAccumulator := pmDev.PowerMeter_DB6_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB7_2]( lrAccumulator := pmDev.PowerMeter_DB7_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB8_2]( lrAccumulator := pmDev.PowerMeter_DB8_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB9_2]( lrAccumulator := pmDev.PowerMeter_DB9_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB10_2]( lrAccumulator := pmDev.PowerMeter_DB10_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB11_2]( lrAccumulator := pmDev.PowerMeter_DB11_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB12_2]( lrAccumulator := pmDev.PowerMeter_DB12_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB13_2]( lrAccumulator := pmDev.PowerMeter_DB13_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB14_2]( lrAccumulator := pmDev.PowerMeter_DB14_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1H[DB15_2]( lrAccumulator := pmDev.PowerMeter_DB15_2.Basic.RealEnergy_IntoLoad);
+// calculate Day
+	arCalculateEnergy_1D[LV01]( lrAccumulator := pmDev.DB07_01_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_PR1_1]( lrAccumulator := pmDev.DB06_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB1]( lrAccumulator := pmDev.DB05_10_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB2]( lrAccumulator := pmDev.DB04_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB3]( lrAccumulator := pmDev.DB04_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB4]( lrAccumulator := pmDev.DB04_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB1_1]( lrAccumulator := pmDev.DB05_09_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB2_1]( lrAccumulator := pmDev.DB04_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB3_1]( lrAccumulator := pmDev.DB04_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB4_1]( lrAccumulator := pmDev.DB04_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB5]( lrAccumulator := pmDev.DB03_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB6]( lrAccumulator := pmDev.DB03_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB7]( lrAccumulator := pmDev.DB03_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_MR]( lrAccumulator := pmDev.DB06_11_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB5_1]( lrAccumulator := pmDev.DB03_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB6_1]( lrAccumulator := pmDev.DB03_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB7_1]( lrAccumulator := pmDev.DB03_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LV02]( lrAccumulator := pmDev.DB07_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_PR1_2]( lrAccumulator := pmDev.DB06_05_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_AIRCOMP]( lrAccumulator := pmDev.DB07_03_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_AHU]( lrAccumulator := pmDev.DB06_07_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB8]( lrAccumulator := pmDev.DB05_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB9]( lrAccumulator := pmDev.DB05_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB10]( lrAccumulator := pmDev.DB05_08_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB8_1]( lrAccumulator := pmDev.DB05_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB9_1]( lrAccumulator := pmDev.DB05_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB10_1]( lrAccumulator := pmDev.DB05_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[A1]( lrAccumulator := pmDev.DB07_06_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[A2]( lrAccumulator := pmDev.DB07_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[A3]( lrAccumulator := pmDev.DB07_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[A4]( lrAccumulator := pmDev.DB07_09_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[A5]( lrAccumulator := pmDev.DB07_10_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR1A]( lrAccumulator := pmDev.DB05_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR1B]( lrAccumulator := pmDev.DB05_02_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR2A]( lrAccumulator := pmDev.DB05_22_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR2B]( lrAccumulator := pmDev.DB05_21_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR3A]( lrAccumulator := pmDev.DB03_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_WH]( lrAccumulator := pmDev.DB01_18_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR3B]( lrAccumulator := pmDev.DB03_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR4A]( lrAccumulator := pmDev.DB04_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR4B]( lrAccumulator := pmDev.DB04_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_BM]( lrAccumulator := pmDev.DB01_20_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_BM]( lrAccumulator := pmDev.DB01_22_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LV03]( lrAccumulator := pmDev.DB06_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_MVAC1]( lrAccumulator := pmDev.DB07_05_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_MVAC2]( lrAccumulator := pmDev.DB07_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_OFF2]( lrAccumulator := pmDev.DB06_38_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_EL1]( lrAccumulator := pmDev.DB06_03_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_EL2]( lrAccumulator := pmDev.DB06_01_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_OFF1]( lrAccumulator := pmDev.DB06_08_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_KIT]( lrAccumulator := pmDev.DB06_33_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_WH2]( lrAccumulator := pmDev.DB01_12_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_WH1]( lrAccumulator := pmDev.DB01_11_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[CH4]( lrAccumulator := pmDev.DB07_11_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[CH5]( lrAccumulator := pmDev.DB07_12_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[CH6]( lrAccumulator := pmDev.DB07_13_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LV04]( lrAccumulator := pmDev.DB06_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB_PR2]( lrAccumulator := pmDev.DB01_07_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB11]( lrAccumulator := pmDev.DB01_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB12]( lrAccumulator := pmDev.DB01_01_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB13]( lrAccumulator := pmDev.DB02_02_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB14]( lrAccumulator := pmDev.DB02_06_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB11_1]( lrAccumulator := pmDev.DB01_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB12_1]( lrAccumulator := pmDev.DB01_02_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB13_1]( lrAccumulator := pmDev.DB02_01_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB14_1]( lrAccumulator := pmDev.DB02_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB15]( lrAccumulator := pmDev.DB02_04_5500.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB15_1]( lrAccumulator := pmDev.DB02_03_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR5A]( lrAccumulator := pmDev.DB02_08_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR5B]( lrAccumulator := pmDev.DB02_07_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR6A]( lrAccumulator := pmDev.DB01_06_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[LP_PR6B]( lrAccumulator := pmDev.DB01_05_5350.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB1_2]( lrAccumulator := pmDev.PowerMeter_DB1_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB2_2]( lrAccumulator := pmDev.PowerMeter_DB2_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB3_2]( lrAccumulator := pmDev.PowerMeter_DB3_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB4_2]( lrAccumulator := pmDev.PowerMeter_DB4_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB5_2]( lrAccumulator := pmDev.PowerMeter_DB5_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB6_2]( lrAccumulator := pmDev.PowerMeter_DB6_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB7_2]( lrAccumulator := pmDev.PowerMeter_DB7_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB8_2]( lrAccumulator := pmDev.PowerMeter_DB8_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB9_2]( lrAccumulator := pmDev.PowerMeter_DB9_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB10_2]( lrAccumulator := pmDev.PowerMeter_DB10_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB11_2]( lrAccumulator := pmDev.PowerMeter_DB11_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB12_2]( lrAccumulator := pmDev.PowerMeter_DB12_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB13_2]( lrAccumulator := pmDev.PowerMeter_DB13_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB14_2]( lrAccumulator := pmDev.PowerMeter_DB14_2.Basic.RealEnergy_IntoLoad);
+	arCalculateEnergy_1D[DB15_2]( lrAccumulator := pmDev.PowerMeter_DB15_2.Basic.RealEnergy_IntoLoad);
+//FIFO Hour
+	// // Check NEw Hour ( in the last Meter => it's mean all the calculate in 1 hour is updated)	
+	IF arCalculateEnergy_1H[pmDev.numAllMeter-1].bNewPeriodAlarm THEN
+		FIFOEnergyTimestruct_1H.MR_AddValue( Value := arCalculateEnergy_1H[pmDev.numAllMeter-1].previousTimestampOut);
+		FOR iLoop := 0 TO pmDev.numAllMeter-1 DO
+			arFIFOEnergy_1H[iLoop].MR_AddValue( Value := arCalculateEnergy_1H[iLoop].accumulatedValueOut);
+			arCalculateEnergy_1H[iLoop].MR_Acknowledge();
+		END_FOR
+	END_IF	
+// Check NEw Day ( in the last Meter => it's mean all the calculate in 1 day is updated)	
+	IF arCalculateEnergy_1D[pmDev.numAllMeter-1].bNewPeriodAlarm THEN
+		FIFOEnergyTimestruct_1D.MR_AddValue(  Value := arCalculateEnergy_1H[pmDev.numAllMeter-1].previousTimestampOut);
+		FOR iLoop := 0 TO pmDev.numAllMeter-1 DO
+			// round number before go to the FIFO
+			arFIFOEnergy_1D[iLoop].MR_AddValue( Value := F_RoundLrealEx( lrIn := arCalculateEnergy_1D[iLoop].accumulatedValueOut ,iPrecision := 0));
+			// Ack The Calculate
+			arCalculateEnergy_1D[iloop].MR_Acknowledge();
+		END_FOR
+
+	END_IF
+	
+CASE eStateReport OF
+	STATE_REPORT_WAIT:
+		// Check the last one FIFO[-1] hour if have data => request report to Aveva.
+			IF arFIFOEnergy_1H[pmDev.numAllMeter-1].DataReady  THEN
+				eStateReport := STATE_REPORT_ENERGY_HOUR_REQUEST;
+		// Check the last one FIFO[-1] hour if have data => request report to Aveva.
+			ELSIF arFIFOEnergy_1D[pmDev.numAllMeter-1].DataReady  THEN
+				eStateReport := STATE_REPORT_ENERGY_DAY_REQUEST;
+			END_IF;
+			
+	STATE_REPORT_ENERGY_HOUR_REQUEST:
+		sDateAndTimeReportAveva := TimeStruct_To_sTimeAveva(timestruct := FIFOEnergyTimestruct_1H.OldestData, typeFormat := 5 );
+		sMsReportAveva			:= WORD_TO_STRING ( FIFOEnergyTimestruct_1H.OldestData.wMilliseconds);
+		
+		fbMachineLogger.MR_AddLogs( sLogMessage :=  CONCAT('REPORT_ENERGY_HOUR_REQUEST  ', sDateAndTimeReportAveva  ));
+		eStateReport := STATE_REPORT_ENERGY_HOUR_ACTIVE_REQUEST;
+	
+	STATE_REPORT_ENERGY_HOUR_ACTIVE_REQUEST	:
+		tonPrepareValue( IN := TRUE,
+							PT := tTimePrepareValue);
+		IF tonPrepareValue.Q THEN
+			tonPrepareValue( IN := FALSE);
+			bEnergyReportHourEvent := TRUE;
+			eStateReport := STATE_REPORT_ENERGY_HOUR_WAIT_ACK;
+		END_IF
+	
+	STATE_REPORT_ENERGY_HOUR_WAIT_ACK:
+		IF bEnergyReportHourEvent = FALSE THEN
+			FOR iLoop := 0 TO pmDev.numAllMeter-1 DO
+				arFIFOEnergy_1H[iLoop].MR_AckGetValue();
+			END_FOR
+			FIFOEnergyTimestruct_1H.MR_AckGetValue();
+			fbMachineLogger.MR_AddLogs( sLogMessage :=  'REPORT_ENERGY_HOUR_ACKed  ');
+			eStateReport := STATE_REPORT_WAIT;
+		END_IF
+				
+	STATE_REPORT_ENERGY_DAY_REQUEST:
+		CalculateVirtualObject();
+		sDateAndTimeReportAveva := TimeStruct_To_sTimeAveva(timestruct := FIFOEnergyTimestruct_1D.OldestData, typeFormat := 5 );
+	 	sMsReportAveva			:= WORD_TO_STRING ( FIFOEnergyTimestruct_1D.OldestData.wMilliseconds);
+		bEnergyReportDayEvent := TRUE;
+		fbMachineLogger.MR_AddLogs( sLogMessage :=  CONCAT('REPORT_ENERGY_DAY_REQUEST  ', sDateAndTimeReportAveva  ));
+		eStateReport := STATE_REPORT_ENERGY_DAY_ACTIVE_REQUEST;
+		
+	STATE_REPORT_ENERGY_DAY_ACTIVE_REQUEST	:
+		tonPrepareValue( IN := TRUE,
+							PT := tTimePrepareValue);
+		IF tonPrepareValue.Q THEN
+			tonPrepareValue( IN := FALSE);
+			bEnergyReportDayEvent := TRUE;
+			eStateReport := STATE_REPORT_ENERGY_DAY_WAIT_ACK;
+		END_IF	
+		
+	STATE_REPORT_ENERGY_DAY_WAIT_ACK:
+		IF bEnergyReportDayEvent = FALSE THEN
+			FOR iLoop := 0 TO pmDev.numAllMeter-1 DO
+				arFIFOEnergy_1D[iLoop].MR_AckGetValue();	
+			END_FOR
+
+			FIFOEnergyTimestruct_1D.MR_AckGetValue();
+			fbMachineLogger.MR_AddLogs( sLogMessage :=  'REPORT_ENERGY_HOUR_ACKed  ');
+			eStateReport := STATE_REPORT_WAIT;
+		END_IF
+END_CASE
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="PmReport2">
+      <LineId Id="53" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="15" Count="0" />
+    </LineIds>
+    <LineIds Name="PmReport2.CalculateVirtualObject">
+      <LineId Id="6" Count="109" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PmReport2.Init">
+      <LineId Id="187" Count="1" />
+      <LineId Id="12" Count="86" />
+      <LineId Id="189" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="100" Count="86" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="190" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="191" Count="0" />
+      <LineId Id="193" Count="1" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="197" Count="1" />
+      <LineId Id="196" Count="0" />
+      <LineId Id="199" Count="0" />
+      <LineId Id="201" Count="1" />
+      <LineId Id="200" Count="0" />
+      <LineId Id="213" Count="2" />
+      <LineId Id="220" Count="1" />
+      <LineId Id="216" Count="3" />
+      <LineId Id="222" Count="1" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="203" Count="0" />
+      <LineId Id="224" Count="2" />
+    </LineIds>
+    <LineIds Name="PmReport2.Run">
+      <LineId Id="96" Count="0" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="97" Count="85" />
+      <LineId Id="184" Count="87" />
+      <LineId Id="183" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="274" Count="0" />
+      <LineId Id="944" Count="0" />
+      <LineId Id="934" Count="0" />
+      <LineId Id="281" Count="0" />
+      <LineId Id="368" Count="0" />
+      <LineId Id="276" Count="0" />
+      <LineId Id="275" Count="0" />
+      <LineId Id="632" Count="0" />
+      <LineId Id="455" Count="0" />
+      <LineId Id="945" Count="0" />
+      <LineId Id="935" Count="1" />
+      <LineId Id="635" Count="0" />
+      <LineId Id="940" Count="0" />
+      <LineId Id="544" Count="0" />
+      <LineId Id="630" Count="1" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="722" Count="0" />
+      <LineId Id="988" Count="10" />
+      <LineId Id="1000" Count="26" />
+      <LineId Id="1028" Count="18" />
+      <LineId Id="726" Count="0" />
+      <LineId Id="1048" Count="4" />
+      <LineId Id="731" Count="0" />
+      <LineId Id="733" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

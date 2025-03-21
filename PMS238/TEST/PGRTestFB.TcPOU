@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PGRTestFB" Id="{206e4f68-a63b-4760-bf2b-dfc0027728aa}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PGRTestFB
+VAR
+	Fb_Calculate : FB_CalCulateAccumulation;
+	lrAccumulation : LREAL;
+	CurrentTime : TIMESTRUCT;
+	previoustime : TIMESTRUCT;
+	bAcknowledgeNewPeriodAlarm : BOOL ;
+	bMRAckAlarm	: BOOL;
+	Value1Minute : LREAL;
+	value1Hour	: LREAL;
+	value1Day : LREAL;
+	bEventHour : BOOL;
+	bEventDay : BOOL;
+	bFirstCycle : BOOL := TRUE;
+	bReset	: BOOL;
+	eTimeAccumulate : E_CompareTime;
+	
+
+END_VAR
+VAR
+	fbFIFO_lr : FB_FIFO_Lreal;
+	bFull : BOOL;
+	bempty : BOOL;
+	valueOut : LREAL;
+	ValueInt : LREAL;
+	ackValue : BOOL;
+	Addvalue : BOOL;
+	ResetFIFO : BOOL;
+	head : UINT;
+	Tail : UINT;
+	Nt_systemTime : TIMESTRUCT;
+	fb_localsystemtime : TIMESTRUCT;
+	
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[///
+	lrAccumulation := lrAccumulation + 0.01;
+	
+	Fb_Calculate.TimeAccumulate := eTimeAccumulate;
+	
+	IF bFirstCycle THEN
+		 IF Fb_Calculate.MR_Init() THEN bFirstCycle := FALSE; END_IF;
+	END_IF
+	
+	Fb_Calculate(lrAccumulator := lrAccumulation,
+					accumulatedValueOut => Value1Minute,
+					previousTimestampOut => previoustime,
+					bNewPeriodAlarm => bAcknowledgeNewPeriodAlarm);
+					
+	IF bMRAckAlarm THEN 
+		IF Fb_Calculate.MR_Acknowledge() THEN
+			bMRAckAlarm := FALSE ; 
+		END_IF
+	END_IF
+	IF bReset THEN
+		IF Fb_Calculate.MR_Reset() THEN
+			bReset := FALSE;
+		END_IF
+	END_IF
+/////////
+
+bempty :=	fbFIFO_lr.IsEmpty;
+bFull := fbFIFO_lr.IsFull;
+
+IF ackValue THEN
+	IF fbFIFO_lr.MR_AckGetValue() THEN
+		ackValue := FALSE;
+	END_IF
+END_IF		
+
+IF Addvalue THEN
+	IF fbFIFO_lr.MR_AddValue( Value := ValueInt)THEN
+		Addvalue := FALSE;
+	END_IF
+END_IF
+
+IF ResetFIFO THEN
+	IF fbFIFO_lr.MR_Reset() THEN
+		ResetFIFO := FALSE;
+	END_IF
+END_IF
+valueOut := fbFIFO_lr.OldestData;
+head := fbFIFO_lr.HeadIndex;
+Tail := fbFIFO_lr.TailIndex;
+///
+Nt_systemTime := pmDev.NT_GetTime.TIMESTR;
+fb_localsystemtime := GVL.fbMachineTime.systemTime;]]></ST>
+    </Implementation>
+    <LineIds Name="PGRTestFB">
+      <LineId Id="73" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="39" Count="1" />
+      <LineId Id="42" Count="1" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="91" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="107" Count="1" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="103" Count="1" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="101" Count="1" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="111" Count="1" />
+      <LineId Id="75" Count="1" />
+      <LineId Id="116" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

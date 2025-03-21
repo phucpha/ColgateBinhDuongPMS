@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_MachineLogger" Id="{2f1915c6-1e69-4780-a036-9c83e91b8a81}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_MachineLogger
+VAR CONSTANT
+	sMACHINE_LOGGER_NAME		: STRING := 'PMS';
+	sMACHINE_LOGGER_DIRECTORY	: STRING := '\Hard Disk\';
+	sMACHINE_LOGGER_FILE_NAME	: STRING := 'Machine_Logger_';
+END_VAR
+VAR
+	bFirstCycle : BOOL	:= TRUE; (* Auxilary bit for initial setup assignaments *)
+	bTestWrite : BOOL;
+	bActivated : BOOL; 
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bFirstCycle THEN
+	bFirstCycle := FALSE;
+	fbMachineLogger.MR_FirstCycle(	sName 			:= sMACHINE_LOGGER_NAME,
+									sFileDir		:= sMACHINE_LOGGER_DIRECTORY,
+									sFileName 		:= sMACHINE_LOGGER_FILE_NAME,
+									sAmsNetId 		:= '',
+									bAddTimeStamp	:= TRUE,
+									bAddHeader		:= TRUE);
+
+	
+
+END_IF
+
+IF NOT fbMachineLogger.Active THEN
+	fbMachineLogger.MR_Init();
+END_IF
+(* Cyclic run *)
+fbMachineLogger();
+IF bTestWrite THEN
+	bTestWrite := 0;
+	fbMachineLogger.MR_AddLogs( sLogMessage := 'this is test add log');
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_MachineLogger">
+      <LineId Id="13" Count="7" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="22" Count="1" />
+      <LineId Id="41" Count="2" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="37" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

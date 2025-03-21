@@ -1,0 +1,1578 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PgrTest" Id="{ffdeffec-93d5-48ae-8043-97a2cd1259f6}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PgrTest
+VAR
+	arPM : ARRAY[0..NumRealMeters-1] OF FB_PmSimulate;
+	bFirstCycle : BOOL := true;
+	iloop : UINT;
+
+END_VAR
+VAR CONSTANT
+	NumRealMeters : UINT := 72;
+	arDentalRealEnergy_IntoLoad : ARRAY[0..NumRealMeters-1] OF LREAL := [	81.4864739239071,
+																				80.361624988331,
+																				0,
+																				3.43962071209237,
+																				7.61364692757743,
+																				7.02333364320482,
+																				0,
+																				1.16203402435553,
+																				1.98010597750182,
+																				3.70456446964543,
+																				0,
+																				0,
+																				0,
+																				0.599609556567453,
+																				0,
+																				0,
+																				0,
+																				96.1931765361507,
+																				39.2256205261452,
+																				48.2615970995338,
+																				8.1342381704887,
+																				0,
+																				0,
+																				0,
+																				0,
+																				0,
+																				0,
+																				14.678813795659,
+																				0,
+																				5.05717207399526,
+																				14.8229060146791,
+																				11.550618202094,
+																				0,
+																				0,
+																				0,
+																				0,
+																				0,
+																				1.58036627312352,
+																				0,
+																				0.460165473644789,
+																				0.469461745839634,
+																				0.0511294970716433,
+																				0.57172073998292,
+																				60.4118248581952,
+																				30.0594961420288,
+																				18.4763409872529,
+																				2.66338198382287,
+																				0.515943106813855,
+																				0.260295621455638,
+																				2.56577112577701,
+																				1.849958166774,
+																				2.35195686529559,
+																				1.20386724923233,
+																				1.7662917170204,
+																				1.56177372873383,
+																				5.14083852374886,
+																				31.3144928883328,
+																				31.0449009946823,
+																				2.16138328530128,
+																				2.62154875894607,
+																				4.88054290229322,
+																				8.05521985683253,
+																				0.492702426326744,
+																				0.952867899971534,
+																				2.31012364041879,
+																				7.18601840661459,
+																				11.6575253323347,
+																				1.99869852189151,
+																				0.134795946825241,
+																				0.488054290229322,
+																				0.0278888165845327,
+																				0.0139444082922663
+																				];
+
+
+END_VAR
+VAR PERSISTENT 
+	
+	LV01_Real_RealEnergy_IntoLoad : LREAL := 3630639; 
+	DB_PR1_1_Real_RealEnergy_IntoLoad : LREAL := 14149755;
+	DB1_Real_RealEnergy_IntoLoad : LREAL := 6246714;
+	DB2_Real_RealEnergy_IntoLoad : LREAL := 4873554;
+	DB3_Real_RealEnergy_IntoLoad : LREAL := 6891408;
+	DB4_Real_RealEnergy_IntoLoad : LREAL := 6437618;
+	DB1_1_Real_RealEnergy_IntoLoad : LREAL :=  0;
+	DB2_1_Real_RealEnergy_IntoLoad : LREAL := 1551326;
+	DB3_1_Real_RealEnergy_IntoLoad : LREAL := 1557420;
+	DB4_1_Real_RealEnergy_IntoLoad : LREAL :=  722266;
+	DB5_Real_RealEnergy_IntoLoad : LREAL :=  16192073;
+	DB6_Real_RealEnergy_IntoLoad : LREAL := 16830162;
+	DB7_Real_RealEnergy_IntoLoad : LREAL :=  16947698;
+	DB_MR_Real_RealEnergy_IntoLoad : LREAL :=  1225028;
+	DB5_1_Real_RealEnergy_IntoLoad : LREAL := 0;
+	DB6_1_Real_RealEnergy_IntoLoad : LREAL :=  0;
+	DB7_1_Real_RealEnergy_IntoLoad : LREAL := 0;
+	LV02_Real_RealEnergy_IntoLoad : LREAL := 6829629;
+	DB_PR1_2_Real_RealEnergy_IntoLoad : LREAL := 8091123;
+	DB_AIRCOMP_Real_RealEnergy_IntoLoad : LREAL := 7697622;
+	DB_AHU_Real_RealEnergy_IntoLoad : LREAL := 12769798;
+	DB8_Real_RealEnergy_IntoLoad : LREAL := 17048080;
+	DB9_Real_RealEnergy_IntoLoad : LREAL := 16994216;
+	DB10_Real_RealEnergy_IntoLoad : LREAL :=  6143691;
+	DB8_1_Real_RealEnergy_IntoLoad : LREAL :=  0;
+	DB9_1_Real_RealEnergy_IntoLoad : LREAL := 0;
+	DB10_1_Real_RealEnergy_IntoLoad : LREAL := 0;
+	A1_Real_RealEnergy_IntoLoad : LREAL := 491971;
+	A2_Real_RealEnergy_IntoLoad : LREAL :=  659353;
+	A3_Real_RealEnergy_IntoLoad : LREAL := 367659;
+	A4_Real_RealEnergy_IntoLoad : LREAL := 410530;
+	A5_Real_RealEnergy_IntoLoad : LREAL :=  708399;
+	LP_PR1A_Real_RealEnergy_IntoLoad : LREAL := 0;
+	LP_PR1B_Real_RealEnergy_IntoLoad : LREAL := 0;
+	LP_PR2A_Real_RealEnergy_IntoLoad : LREAL := 0;
+	LP_PR2B_Real_RealEnergy_IntoLoad : LREAL := 0;
+	LP_PR3A_Real_RealEnergy_IntoLoad : LREAL := 0;
+	DB_WH_Real_RealEnergy_IntoLoad : LREAL := 3215883;
+	LP_PR3B_Real_RealEnergy_IntoLoad : LREAL := 0;
+	LP_PR4A_Real_RealEnergy_IntoLoad : LREAL :=  344117;
+	LP_PR4B_Real_RealEnergy_IntoLoad : LREAL := 356961;
+	LP_BM_Real_RealEnergy_IntoLoad : LREAL := 129467;
+	DB_BM_Real_RealEnergy_IntoLoad : LREAL := 837274;
+	LV03_Real_RealEnergy_IntoLoad : LREAL := 9800613;
+	DB_MVAC1_Real_RealEnergy_IntoLoad : LREAL := 6100039;
+	DB_MVAC2_Real_RealEnergy_IntoLoad : LREAL := 2814844;
+	DB_OFF2_Real_RealEnergy_IntoLoad : LREAL :=  4121718;
+	LP_EL1_Real_RealEnergy_IntoLoad : LREAL :=  89440;
+	LP_EL2_Real_RealEnergy_IntoLoad : LREAL :=  676522;
+	DB_OFF1_Real_RealEnergy_IntoLoad : LREAL := 3137595;
+	DB_KIT_Real_RealEnergy_IntoLoad : LREAL := 2163140;
+	LP_WH2_Real_RealEnergy_IntoLoad : LREAL := 1905378;
+	LP_WH1_Real_RealEnergy_IntoLoad : LREAL := 192677;
+	CH4_Real_RealEnergy_IntoLoad : LREAL := 180401;
+	CH5_Real_RealEnergy_IntoLoad : LREAL := 126235;
+	CH6_Real_RealEnergy_IntoLoad : LREAL := 225603;
+	LV04_Real_RealEnergy_IntoLoad : LREAL := 4422056;
+	DB_PR2_Real_RealEnergy_IntoLoad : LREAL := 31131722;
+	DB11_Real_RealEnergy_IntoLoad : LREAL := 2658776;
+	DB12_Real_RealEnergy_IntoLoad : LREAL := 3431708;
+	DB13_Real_RealEnergy_IntoLoad : LREAL :=  4640308;
+	DB14_Real_RealEnergy_IntoLoad : LREAL := 7195837;
+	DB11_1_Real_RealEnergy_IntoLoad : LREAL := 575609;
+	DB12_1_Real_RealEnergy_IntoLoad : LREAL := 1252745;
+	DB13_1_Real_RealEnergy_IntoLoad : LREAL := 1380059;
+	DB14_1_Real_RealEnergy_IntoLoad : LREAL := 3846554;
+	DB15_Real_RealEnergy_IntoLoad : LREAL := 7943089;
+	DB15_1_Real_RealEnergy_IntoLoad : LREAL := 4303139;
+	LP_PR5A_Real_RealEnergy_IntoLoad : LREAL := 124750;
+	LP_PR5B_Real_RealEnergy_IntoLoad : LREAL := 275030;
+	LP_PR6A_Real_RealEnergy_IntoLoad : LREAL := 30196;
+	LP_PR6B_Real_RealEnergy_IntoLoad : LREAL := 22547;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bFirstCycle THEN
+	bFirstCycle := FALSE;
+	FirstCycle();
+END_IF
+
+FOR iloop := 0 TO NumRealMeters-1 DO 
+	// fb processing
+	arPM[iloop]();
+	// return Real_RealEnergy_IntoLoad
+	LV01_Real_RealEnergy_IntoLoad := arPM[LV01].p_RealEnergy_IntoLoad;
+	DB_PR1_1_Real_RealEnergy_IntoLoad := arPM[DB_PR1_1].p_RealEnergy_IntoLoad;
+	DB1_Real_RealEnergy_IntoLoad := arPM[DB1].p_RealEnergy_IntoLoad;
+	DB2_Real_RealEnergy_IntoLoad := arPM[DB2].p_RealEnergy_IntoLoad;
+	DB3_Real_RealEnergy_IntoLoad := arPM[DB3].p_RealEnergy_IntoLoad;
+	DB4_Real_RealEnergy_IntoLoad := arPM[DB4].p_RealEnergy_IntoLoad;
+	DB1_1_Real_RealEnergy_IntoLoad := arPM[DB1_1].p_RealEnergy_IntoLoad;
+	DB2_1_Real_RealEnergy_IntoLoad := arPM[DB2_1].p_RealEnergy_IntoLoad;
+	DB3_1_Real_RealEnergy_IntoLoad := arPM[DB3_1].p_RealEnergy_IntoLoad;
+	DB4_1_Real_RealEnergy_IntoLoad := arPM[DB4_1].p_RealEnergy_IntoLoad;
+	DB5_Real_RealEnergy_IntoLoad := arPM[DB5].p_RealEnergy_IntoLoad;
+	DB6_Real_RealEnergy_IntoLoad := arPM[DB6].p_RealEnergy_IntoLoad;
+	DB7_Real_RealEnergy_IntoLoad := arPM[DB7].p_RealEnergy_IntoLoad;
+	DB_MR_Real_RealEnergy_IntoLoad := arPM[DB_MR].p_RealEnergy_IntoLoad;
+	DB5_1_Real_RealEnergy_IntoLoad := arPM[DB5_1].p_RealEnergy_IntoLoad;
+	DB6_1_Real_RealEnergy_IntoLoad := arPM[DB6_1].p_RealEnergy_IntoLoad;
+	DB7_1_Real_RealEnergy_IntoLoad := arPM[DB7_1].p_RealEnergy_IntoLoad;
+	LV02_Real_RealEnergy_IntoLoad := arPM[LV02].p_RealEnergy_IntoLoad;
+	DB_PR1_2_Real_RealEnergy_IntoLoad := arPM[DB_PR1_2].p_RealEnergy_IntoLoad;
+	DB_AIRCOMP_Real_RealEnergy_IntoLoad := arPM[DB_AIRCOMP].p_RealEnergy_IntoLoad;
+	DB_AHU_Real_RealEnergy_IntoLoad := arPM[DB_AHU].p_RealEnergy_IntoLoad;
+	DB8_Real_RealEnergy_IntoLoad := arPM[DB8].p_RealEnergy_IntoLoad;
+	DB9_Real_RealEnergy_IntoLoad := arPM[DB9].p_RealEnergy_IntoLoad;
+	DB10_Real_RealEnergy_IntoLoad := arPM[DB10].p_RealEnergy_IntoLoad;
+	DB8_1_Real_RealEnergy_IntoLoad := arPM[DB8_1].p_RealEnergy_IntoLoad;
+	DB9_1_Real_RealEnergy_IntoLoad := arPM[DB9_1].p_RealEnergy_IntoLoad;
+	DB10_1_Real_RealEnergy_IntoLoad := arPM[DB10_1].p_RealEnergy_IntoLoad;
+	A1_Real_RealEnergy_IntoLoad := arPM[A1].p_RealEnergy_IntoLoad;
+	A2_Real_RealEnergy_IntoLoad := arPM[A2].p_RealEnergy_IntoLoad;
+	A3_Real_RealEnergy_IntoLoad := arPM[A3].p_RealEnergy_IntoLoad;
+	A4_Real_RealEnergy_IntoLoad := arPM[A4].p_RealEnergy_IntoLoad;
+	A5_Real_RealEnergy_IntoLoad := arPM[A5].p_RealEnergy_IntoLoad;
+	LP_PR1A_Real_RealEnergy_IntoLoad := arPM[LP_PR1A].p_RealEnergy_IntoLoad;
+	LP_PR1B_Real_RealEnergy_IntoLoad := arPM[LP_PR1B].p_RealEnergy_IntoLoad;
+	LP_PR2A_Real_RealEnergy_IntoLoad := arPM[LP_PR2A].p_RealEnergy_IntoLoad;
+	LP_PR2B_Real_RealEnergy_IntoLoad := arPM[LP_PR2B].p_RealEnergy_IntoLoad;
+	LP_PR3A_Real_RealEnergy_IntoLoad := arPM[LP_PR3A].p_RealEnergy_IntoLoad;
+	DB_WH_Real_RealEnergy_IntoLoad := arPM[DB_WH].p_RealEnergy_IntoLoad;
+	LP_PR3B_Real_RealEnergy_IntoLoad := arPM[LP_PR3B].p_RealEnergy_IntoLoad;
+	LP_PR4A_Real_RealEnergy_IntoLoad := arPM[LP_PR4A].p_RealEnergy_IntoLoad;
+	LP_PR4B_Real_RealEnergy_IntoLoad := arPM[LP_PR4B].p_RealEnergy_IntoLoad;
+	LP_BM_Real_RealEnergy_IntoLoad := arPM[LP_BM].p_RealEnergy_IntoLoad;
+	DB_BM_Real_RealEnergy_IntoLoad := arPM[DB_BM].p_RealEnergy_IntoLoad;
+	LV03_Real_RealEnergy_IntoLoad := arPM[LV03].p_RealEnergy_IntoLoad;
+	DB_MVAC1_Real_RealEnergy_IntoLoad := arPM[DB_MVAC1].p_RealEnergy_IntoLoad;
+	DB_MVAC2_Real_RealEnergy_IntoLoad := arPM[DB_MVAC2].p_RealEnergy_IntoLoad;
+	DB_OFF2_Real_RealEnergy_IntoLoad := arPM[DB_OFF2].p_RealEnergy_IntoLoad;
+	LP_EL1_Real_RealEnergy_IntoLoad := arPM[LP_EL1].p_RealEnergy_IntoLoad;
+	LP_EL2_Real_RealEnergy_IntoLoad := arPM[LP_EL2].p_RealEnergy_IntoLoad;
+	DB_OFF1_Real_RealEnergy_IntoLoad := arPM[DB_OFF1].p_RealEnergy_IntoLoad;
+	DB_KIT_Real_RealEnergy_IntoLoad := arPM[DB_KIT].p_RealEnergy_IntoLoad;
+	LP_WH2_Real_RealEnergy_IntoLoad := arPM[LP_WH2].p_RealEnergy_IntoLoad;
+	LP_WH1_Real_RealEnergy_IntoLoad := arPM[LP_WH1].p_RealEnergy_IntoLoad;
+	CH4_Real_RealEnergy_IntoLoad := arPM[CH4].p_RealEnergy_IntoLoad;
+	CH5_Real_RealEnergy_IntoLoad := arPM[CH5].p_RealEnergy_IntoLoad;
+	CH6_Real_RealEnergy_IntoLoad := arPM[CH6].p_RealEnergy_IntoLoad;
+	LV04_Real_RealEnergy_IntoLoad := arPM[LV04].p_RealEnergy_IntoLoad;
+	DB_PR2_Real_RealEnergy_IntoLoad := arPM[DB_PR2].p_RealEnergy_IntoLoad;
+	DB11_Real_RealEnergy_IntoLoad := arPM[DB11].p_RealEnergy_IntoLoad;
+	DB12_Real_RealEnergy_IntoLoad := arPM[DB12].p_RealEnergy_IntoLoad;
+	DB13_Real_RealEnergy_IntoLoad := arPM[DB13].p_RealEnergy_IntoLoad;
+	DB14_Real_RealEnergy_IntoLoad := arPM[DB14].p_RealEnergy_IntoLoad;
+	DB11_1_Real_RealEnergy_IntoLoad := arPM[DB11_1].p_RealEnergy_IntoLoad;
+	DB12_1_Real_RealEnergy_IntoLoad := arPM[DB12_1].p_RealEnergy_IntoLoad;
+	DB13_1_Real_RealEnergy_IntoLoad := arPM[DB13_1].p_RealEnergy_IntoLoad;
+	DB14_1_Real_RealEnergy_IntoLoad := arPM[DB14_1].p_RealEnergy_IntoLoad;
+	DB15_Real_RealEnergy_IntoLoad := arPM[DB15].p_RealEnergy_IntoLoad;
+	DB15_1_Real_RealEnergy_IntoLoad := arPM[DB15_1].p_RealEnergy_IntoLoad;
+	LP_PR5A_Real_RealEnergy_IntoLoad := arPM[LP_PR5A].p_RealEnergy_IntoLoad;
+	LP_PR5B_Real_RealEnergy_IntoLoad := arPM[LP_PR5B].p_RealEnergy_IntoLoad;
+	LP_PR6A_Real_RealEnergy_IntoLoad := arPM[LP_PR6A].p_RealEnergy_IntoLoad;
+	LP_PR6B_Real_RealEnergy_IntoLoad := arPM[LP_PR6B].p_RealEnergy_IntoLoad;
+
+	
+	
+END_FOR
+
+]]></ST>
+    </Implementation>
+    <Method Name="FirstCycle" Id="{07ebff27-e3f7-4f9b-b48f-0c1f78ebcb71}">
+      <Declaration><![CDATA[METHOD FirstCycle : BOOL
+VAR_INPUT
+END_VAR
+VAR
+	iloop : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// PMSimulate Constructor 
+	FOR iloop := 0 TO NumRealMeters -1 DO
+		arPM[iloop].Constructor();
+	END_FOR
+//Naming
+	arPM[LV01].Name := 'LV01';
+	arPM[DB_PR1_1].Name := 'DB_PR1_1';
+	arPM[DB1].Name := 'DB1';
+	arPM[DB2].Name := 'DB2';
+	arPM[DB3].Name := 'DB3';
+	arPM[DB4].Name := 'DB4';
+	arPM[DB1_1].Name := 'DB1_1';
+	arPM[DB2_1].Name := 'DB2_1';
+	arPM[DB3_1].Name := 'DB3_1';
+	arPM[DB4_1].Name := 'DB4_1';
+	arPM[DB5].Name := 'DB5';
+	arPM[DB6].Name := 'DB6';
+	arPM[DB7].Name := 'DB7';
+	arPM[DB_MR].Name := 'DB_MR';
+	arPM[DB5_1].Name := 'DB5_1';
+	arPM[DB6_1].Name := 'DB6_1';
+	arPM[DB7_1].Name := 'DB7_1';
+	arPM[LV02].Name := 'LV02';
+	arPM[DB_PR1_2].Name := 'DB_PR1_2';
+	arPM[DB_AIRCOMP].Name := 'DB_AIRCOMP';
+	arPM[DB_AHU].Name := 'DB_AHU';
+	arPM[DB8].Name := 'DB8';
+	arPM[DB9].Name := 'DB9';
+	arPM[DB10].Name := 'DB10';
+	arPM[DB8_1].Name := 'DB8_1';
+	arPM[DB9_1].Name := 'DB9_1';
+	arPM[DB10_1].Name := 'DB10_1';
+	arPM[A1].Name := 'A1';
+	arPM[A2].Name := 'A2';
+	arPM[A3].Name := 'A3';
+	arPM[A4].Name := 'A4';
+	arPM[A5].Name := 'A5';
+	arPM[LP_PR1A].Name := 'LP_PR1A';
+	arPM[LP_PR1B].Name := 'LP_PR1B';
+	arPM[LP_PR2A].Name := 'LP_PR2A';
+	arPM[LP_PR2B].Name := 'LP_PR2B';
+	arPM[LP_PR3A].Name := 'LP_PR3A';
+	arPM[DB_WH].Name := 'DB_WH';
+	arPM[LP_PR3B].Name := 'LP_PR3B';
+	arPM[LP_PR4A ].Name := 'LP_PR4A ';
+	arPM[LP_PR4B].Name := 'LP_PR4B';
+	arPM[LP_BM].Name := 'LP_BM';
+	arPM[DB_BM].Name := 'DB_BM';
+	arPM[LV03].Name := 'LV03';
+	arPM[DB_MVAC1].Name := 'DB_MVAC1';
+	arPM[DB_MVAC2].Name := 'DB_MVAC2';
+	arPM[DB_OFF2].Name := 'DB_OFF2';
+	arPM[LP_EL1].Name := 'LP_EL1';
+	arPM[LP_EL2].Name := 'LP_EL2';
+	arPM[DB_OFF1].Name := 'DB_OFF1';
+	arPM[DB_KIT].Name := 'DB_KIT';
+	arPM[LP_WH2].Name := 'LP_WH2';
+	arPM[LP_WH1].Name := 'LP_WH1';
+	arPM[CH4].Name := 'CH4';
+	arPM[CH5].Name := 'CH5';
+	arPM[CH6].Name := 'CH6';
+	arPM[LV04].Name := 'LV04';
+	arPM[DB_PR2].Name := 'DB_PR2';
+	arPM[DB11].Name := 'DB11';
+	arPM[DB12].Name := 'DB12';
+	arPM[DB13].Name := 'DB13';
+	arPM[DB14].Name := 'DB14';
+	arPM[DB11_1].Name := 'DB11_1';
+	arPM[DB12_1].Name := 'DB12_1';
+	arPM[DB13_1].Name := 'DB13_1';
+	arPM[DB14_1].Name := 'DB14_1';
+	arPM[DB15].Name := 'DB15';
+	arPM[DB15_1].Name := 'DB15_1';
+	arPM[LP_PR5A].Name := 'LP_PR5A';
+	arPM[LP_PR5B].Name := 'LP_PR5B';
+	arPM[LP_PR6A].Name := 'LP_PR6A';
+	arPM[LP_PR6B].Name := 'LP_PR6B';
+
+// reference 
+	arPM[LV01].Ref_PM REF= pmDev.DB07_01_5500;
+	arPM[DB_PR1_1].Ref_PM REF= pmDev.DB06_06_5500;
+	arPM[DB1].Ref_PM ref= pmDev.DB05_10_5500;
+	arPM[DB2].Ref_PM ref= pmDev.DB04_06_5500;
+	arPM[DB3].Ref_PM ref= pmDev.DB04_04_5500;
+	arPM[DB4].Ref_PM ref= pmDev.DB04_02_5500;
+	arPM[DB1_1].Ref_PM ref= pmDev.DB05_09_5350;
+	arPM[DB2_1].Ref_PM ref= pmDev.DB04_05_5350;
+	arPM[DB3_1].Ref_PM ref= pmDev.DB04_03_5350;
+	arPM[DB4_1].Ref_PM ref= pmDev.DB04_01_5350;
+	arPM[DB5].Ref_PM ref= pmDev.DB03_04_5500;
+	arPM[DB6].Ref_PM ref= pmDev.DB03_06_5500;
+	arPM[DB7].Ref_PM ref= pmDev.DB03_02_5500;
+	arPM[DB_MR].Ref_PM ref= pmDev.DB06_11_5500;
+	arPM[DB5_1].Ref_PM ref= pmDev.DB03_03_5350;
+	arPM[DB6_1].Ref_PM ref= pmDev.DB03_05_5350;
+	arPM[DB7_1].Ref_PM ref= pmDev.DB03_01_5350;
+	arPM[LV02].Ref_PM ref= pmDev.DB07_02_5500;
+	arPM[DB_PR1_2].Ref_PM ref= pmDev.DB06_05_5500;
+	arPM[DB_AIRCOMP].Ref_PM ref= pmDev.DB07_03_5500;
+	arPM[DB_AHU].Ref_PM ref= pmDev.DB06_07_5500;
+	arPM[DB8].Ref_PM ref= pmDev.DB05_04_5500;
+	arPM[DB9].Ref_PM ref= pmDev.DB05_06_5500;
+	arPM[DB10].Ref_PM ref= pmDev.DB05_08_5500;
+	arPM[DB8_1].Ref_PM ref= pmDev.DB05_03_5350;
+	arPM[DB9_1].Ref_PM ref= pmDev.DB05_05_5350;
+	arPM[DB10_1].Ref_PM ref= pmDev.DB05_07_5350;
+	arPM[A1].Ref_PM ref= pmDev.DB07_06_5350;
+	arPM[A2].Ref_PM ref= pmDev.DB07_07_5350;
+	arPM[A3].Ref_PM ref= pmDev.DB07_08_5350;
+	arPM[A4].Ref_PM ref= pmDev.DB07_09_5350;
+	arPM[A5].Ref_PM ref= pmDev.DB07_10_5350;
+	arPM[LP_PR1A].Ref_PM ref= pmDev.DB05_01_5350;
+	arPM[LP_PR1B].Ref_PM ref= pmDev.DB05_02_5350;
+	arPM[LP_PR2A].Ref_PM ref= pmDev.DB05_22_5350;
+	arPM[LP_PR2B].Ref_PM ref= pmDev.DB05_21_5350;
+	arPM[LP_PR3A].Ref_PM ref= pmDev.DB03_08_5350;
+	arPM[DB_WH].Ref_PM ref= pmDev.DB01_18_5500;
+	arPM[LP_PR3B].Ref_PM ref= pmDev.DB03_07_5350;
+	arPM[LP_PR4A ].Ref_PM ref= pmDev.DB04_08_5350;
+	arPM[LP_PR4B].Ref_PM ref= pmDev.DB04_07_5350;
+	arPM[LP_BM].Ref_PM ref= pmDev.DB01_20_5500;
+	arPM[DB_BM].Ref_PM ref= pmDev.DB01_22_5500;
+	arPM[LV03].Ref_PM ref= pmDev.DB06_04_5500;
+	arPM[DB_MVAC1].Ref_PM ref= pmDev.DB07_05_5500;
+	arPM[DB_MVAC2].Ref_PM ref= pmDev.DB07_04_5500;
+	arPM[DB_OFF2].Ref_PM ref= pmDev.DB06_38_5500;
+	arPM[LP_EL1].Ref_PM ref= pmDev.DB06_03_5500;
+	arPM[LP_EL2].Ref_PM ref= pmDev.DB06_01_5500;
+	arPM[DB_OFF1].Ref_PM ref= pmDev.DB06_08_5500;
+	arPM[DB_KIT].Ref_PM ref= pmDev.DB06_33_5500;
+	arPM[LP_WH2].Ref_PM ref= pmDev.DB01_12_5350;
+	arPM[LP_WH1].Ref_PM ref= pmDev.DB01_11_5500;
+	arPM[CH4].Ref_PM ref= pmDev.DB07_11_5350;
+	arPM[CH5].Ref_PM ref= pmDev.DB07_12_5350;
+	arPM[CH6].Ref_PM ref= pmDev.DB07_13_5350;
+	arPM[LV04].Ref_PM ref= pmDev.DB06_02_5500;
+	arPM[DB_PR2].Ref_PM ref= pmDev.DB01_07_5500;
+	arPM[DB11].Ref_PM ref= pmDev.DB01_04_5500;
+	arPM[DB12].Ref_PM ref= pmDev.DB01_01_5500;
+	arPM[DB13].Ref_PM ref= pmDev.DB02_02_5500;
+	arPM[DB14].Ref_PM ref= pmDev.DB02_06_5500;
+	arPM[DB11_1].Ref_PM ref= pmDev.DB01_03_5350;
+	arPM[DB12_1].Ref_PM ref= pmDev.DB01_02_5350;
+	arPM[DB13_1].Ref_PM ref= pmDev.DB02_01_5350;
+	arPM[DB14_1].Ref_PM ref= pmDev.DB02_05_5350;
+	arPM[DB15].Ref_PM ref= pmDev.DB02_04_5500;
+	arPM[DB15_1].Ref_PM ref= pmDev.DB02_03_5350;
+	arPM[LP_PR5A].Ref_PM ref= pmDev.DB02_08_5350;
+	arPM[LP_PR5B].Ref_PM ref= pmDev.DB02_07_5350;
+	arPM[LP_PR6A].Ref_PM ref= pmDev.DB01_06_5350;
+	arPM[LP_PR6B].Ref_PM ref= pmDev.DB01_05_5350;
+// set Current A
+	arPM[LV01].p_Current_A := 1500;
+	arPM[DB_PR1_1].p_Current_A := 1783 ;
+	//arPM[DB1].p_Current_A := 50;
+	arPM[DB2].p_Current_A :=  51;
+	arPM[DB3].p_Current_A := 136;
+	arPM[DB4].p_Current_A := 223;
+	//arPM[DB1_1].p_Current_A := ;
+	arPM[DB2_1].p_Current_A := 30;
+	arPM[DB3_1].p_Current_A := 50 ;
+	arPM[DB4_1].p_Current_A :=  100;
+	//arPM[DB5].p_Current_A := ;
+	//arPM[DB6].p_Current_A := ;
+	//arPM[DB7].p_Current_A := ;
+	arPM[DB_MR].p_Current_A := 10;
+	//arPM[DB5_1].p_Current_A := ;
+	//arPM[DB6_1].p_Current_A := ;
+	//arPM[DB7_1].p_Current_A := ;
+	arPM[LV02].p_Current_A := 1789;
+	arPM[DB_PR1_2].p_Current_A := 884;
+	arPM[DB_AIRCOMP].p_Current_A := 952;
+	arPM[DB_AHU].p_Current_A := 151;
+	//arPM[DB8].p_Current_A := ;
+	//arPM[DB9].p_Current_A := ;
+	//arPM[DB10].p_Current_A := ;
+	//arPM[DB8_1].p_Current_A := ;
+	//arPM[DB9_1].p_Current_A := ;
+	//arPM[DB10_1].p_Current_A := ;
+	arPM[A1].p_Current_A := 287 ;
+	//arPM[A2].p_Current_A := ;
+	arPM[A3].p_Current_A := 87 ;
+	arPM[A4].p_Current_A := 297;
+	arPM[A5].p_Current_A := 239;
+	//arPM[LP_PR1A].p_Current_A := ;
+	//arPM[LP_PR1B].p_Current_A := ;
+	//arPM[LP_PR2A].p_Current_A := ;
+	//arPM[LP_PR2B].p_Current_A := ;
+	//arPM[LP_PR3A].p_Current_A := ;
+	arPM[DB_WH].p_Current_A := 26.4;
+	//arPM[LP_PR3B].p_Current_A := ;
+	arPM[LP_PR4A ].p_Current_A := 8.8;
+	arPM[LP_PR4B].p_Current_A := 8.5;
+	arPM[LP_BM].p_Current_A := 0.4;
+	arPM[DB_BM].p_Current_A := 17.68;
+	arPM[LV03].p_Current_A := 1103 ;
+	arPM[DB_MVAC1].p_Current_A := 596;
+	arPM[DB_MVAC2].p_Current_A :=342;
+	arPM[DB_OFF2].p_Current_A := 45 ;
+	arPM[LP_EL1].p_Current_A := 17;
+	arPM[LP_EL2].p_Current_A := 2.5;
+	arPM[DB_OFF1].p_Current_A := 42.7;
+	arPM[DB_KIT].p_Current_A := 20.8;
+	arPM[LP_WH2].p_Current_A := 56;
+	arPM[LP_WH1].p_Current_A := 19.32;
+	arPM[CH4].p_Current_A := 0.86;
+	arPM[CH5].p_Current_A := 77.4;
+	arPM[CH6].p_Current_A := 1.6;
+	arPM[LV04].p_Current_A := 602.6;
+	arPM[DB_PR2].p_Current_A := 516;
+	arPM[DB11].p_Current_A := 19.68;
+	arPM[DB12].p_Current_A := 52.6;
+	arPM[DB13].p_Current_A := 128.3;
+	arPM[DB14].p_Current_A := 153.9;
+	arPM[DB11_1].p_Current_A := 0.104;
+	arPM[DB12_1].p_Current_A := 12.16;
+	arPM[DB13_1].p_Current_A := 49.97;
+	arPM[DB14_1].p_Current_A := 130.8;
+	arPM[DB15].p_Current_A := 161.92;
+	arPM[DB15_1].p_Current_A := 36.45;
+	arPM[LP_PR5A].p_Current_A := 11.18;
+	arPM[LP_PR5B].p_Current_A := 9.24;
+	arPM[LP_PR6A].p_Current_A := 0.5544;
+	arPM[LP_PR6B].p_Current_A := 0.29;
+// CurrentB
+	arPM[LV01].p_Current_B := 1458;
+	arPM[DB_PR1_1].p_Current_B := 1707 ;
+	//arPM[DB1].p_Current_B := 50;
+	arPM[DB2].p_Current_B :=  87;
+	arPM[DB3].p_Current_B := 152;
+	arPM[DB4].p_Current_B := 227.4;
+	//arPM[DB1_1].p_Current_B := ;
+	arPM[DB2_1].p_Current_B := 32;
+	arPM[DB3_1].p_Current_B := 50 ;
+	arPM[DB4_1].p_Current_B :=  112;
+	//arPM[DB5].p_Current_B := ;
+	//arPM[DB6].p_Current_B := ;
+	//arPM[DB7].p_Current_B := ;
+	arPM[DB_MR].p_Current_B := 44.88;
+	//arPM[DB5_1].p_Current_B := ;
+	//arPM[DB6_1].p_Current_B := ;
+	//arPM[DB7_1].p_Current_B := ;
+	arPM[LV02].p_Current_B := 1595;
+	arPM[DB_PR1_2].p_Current_B := 717;
+	arPM[DB_AIRCOMP].p_Current_B := 913;
+	arPM[DB_AHU].p_Current_B := 146;
+	//arPM[DB8].p_Current_B := ;
+	//arPM[DB9].p_Current_B := ;
+	//arPM[DB10].p_Current_B := ;
+	//arPM[DB8_1].p_Current_B := ;
+	//arPM[DB9_1].p_Current_B := ;
+	//arPM[DB10_1].p_Current_B := ;
+	arPM[A1].p_Current_B := 289 ;
+	//arPM[A2].p_Current_B := ;
+	arPM[A3].p_Current_B := 96 ;
+	arPM[A4].p_Current_B := 298;
+	arPM[A5].p_Current_B := 278;
+	//arPM[LP_PR1A].p_Current_B := ;
+	//arPM[LP_PR1B].p_Current_B := ;
+	//arPM[LP_PR2A].p_Current_B := ;
+	//arPM[LP_PR2B].p_Current_B := ;
+	//arPM[LP_PR3A].p_Current_B := ;
+	arPM[DB_WH].p_Current_B := 41.64;
+	//arPM[LP_PR3B].p_Current_B := ;
+	arPM[LP_PR4A ].p_Current_B := 838;
+	arPM[LP_PR4B].p_Current_B := 9.5;
+	arPM[LP_BM].p_Current_B :=0.4;
+	arPM[DB_BM].p_Current_B := 16.68;
+	arPM[LV03].p_Current_B := 1106 ;
+	arPM[DB_MVAC1].p_Current_B := 658;
+	arPM[DB_MVAC2].p_Current_B :=365;
+	arPM[DB_OFF2].p_Current_B := 41 ;
+	arPM[LP_EL1].p_Current_B := 0.14;
+	arPM[LP_EL2].p_Current_B := 2.5;
+	arPM[DB_OFF1].p_Current_B := 62.7;
+	arPM[DB_KIT].p_Current_B := 50;
+	arPM[LP_WH2].p_Current_B := 45;
+	arPM[LP_WH1].p_Current_B := 19.32;
+	arPM[CH4].p_Current_B := 0.86;
+	arPM[CH5].p_Current_B := 77.4;
+	arPM[CH6].p_Current_B := 1.6;
+	arPM[LV04].p_Current_B := 602.6;
+	arPM[DB_PR2].p_Current_B := 516;
+	arPM[DB11].p_Current_B := 19.68;
+	arPM[DB12].p_Current_B := 52.6;
+	arPM[DB13].p_Current_B := 128.3;
+	arPM[DB14].p_Current_B := 171.9;
+	arPM[DB11_1].p_Current_B := 27;
+	arPM[DB12_1].p_Current_B := 21.16;
+	arPM[DB13_1].p_Current_B := 45.97;
+	arPM[DB14_1].p_Current_B := 162;
+	arPM[DB15].p_Current_B := 212;
+	arPM[DB15_1].p_Current_B := 44;
+	arPM[LP_PR5A].p_Current_B := 9.18;
+	arPM[LP_PR5B].p_Current_B := 9.34;
+	arPM[LP_PR6A].p_Current_B := 0.5544;
+	arPM[LP_PR6B].p_Current_B := 0.31;
+// CurrentC
+	arPM[LV01].p_Current_C := 1590;
+	arPM[DB_PR1_1].p_Current_C := 1720 ;
+	//arPM[DB1].p_Current_C := 50;
+	arPM[DB2].p_Current_C :=  58;
+	arPM[DB3].p_Current_C := 142;
+	arPM[DB4].p_Current_C := 171;
+	//arPM[DB1_1].p_Current_C := ;
+	arPM[DB2_1].p_Current_C := 25;
+	arPM[DB3_1].p_Current_C := 43 ;
+	arPM[DB4_1].p_Current_C :=  107;
+	//arPM[DB5].p_Current_C := ;
+	//arPM[DB6].p_Current_C := ;
+	//arPM[DB7].p_Current_C := ;
+	arPM[DB_MR].p_Current_C := 2;
+	//arPM[DB5_1].p_Current_C := ;
+	//arPM[DB6_1].p_Current_C := ;
+	//arPM[DB7_1].p_Current_C := ;
+	arPM[LV02].p_Current_C := 1650;
+	arPM[DB_PR1_2].p_Current_C := 789;
+	arPM[DB_AIRCOMP].p_Current_C := 928;
+	arPM[DB_AHU].p_Current_C := 149;
+	//arPM[DB8].p_Current_C := ;
+	//arPM[DB9].p_Current_C := ;
+	//arPM[DB10].p_Current_C := ;
+	//arPM[DB8_1].p_Current_C := ;
+	//arPM[DB9_1].p_Current_C := ;
+	//arPM[DB10_1].p_Current_C := ;
+	arPM[A1].p_Current_C := 281 ;
+	//arPM[A2].p_Current_C := ;
+	arPM[A3].p_Current_C := 84 ;
+	arPM[A4].p_Current_C := 291;
+	arPM[A5].p_Current_C := 246;
+	//arPM[LP_PR1A].p_Current_C := ;
+	//arPM[LP_PR1B].p_Current_C := ;
+	//arPM[LP_PR2A].p_Current_C := ;
+	//arPM[LP_PR2B].p_Current_C := ;
+	//arPM[LP_PR3A].p_Current_C := ;
+	arPM[DB_WH].p_Current_C := 56;
+	//arPM[LP_PR3B].p_Current_C := ;
+	arPM[LP_PR4A ].p_Current_C := 8.8;
+	arPM[LP_PR4B].p_Current_C := 8.5;
+	//arPM[LP_BM].p_Current_C := 17.68;
+	arPM[DB_BM].p_Current_C := 12.2;
+	arPM[LV03].p_Current_C := 1109 ;
+	arPM[DB_MVAC1].p_Current_C := 365;
+	arPM[DB_MVAC2].p_Current_C :=365;
+	arPM[DB_OFF2].p_Current_C := 20 ;
+	arPM[LP_EL1].p_Current_C := 1.5;
+	arPM[LP_EL2].p_Current_C := 0.4;
+	arPM[DB_OFF1].p_Current_C := 70;
+	arPM[DB_KIT].p_Current_C := 65;
+	arPM[LP_WH2].p_Current_C := 28;
+	arPM[LP_WH1].p_Current_C := 21;
+	arPM[CH4].p_Current_C := 21;
+	arPM[CH5].p_Current_C := 77.4;
+	arPM[CH6].p_Current_C := 104;
+	arPM[LV04].p_Current_C := 580;
+	arPM[DB_PR2].p_Current_C := 544;
+	arPM[DB11].p_Current_C := 51;
+	arPM[DB12].p_Current_C := 49;
+	arPM[DB13].p_Current_C := 75;
+	arPM[DB14].p_Current_C := 111;
+	arPM[DB11_1].p_Current_C := 4;
+	arPM[DB12_1].p_Current_C := 21;
+	arPM[DB13_1].p_Current_C := 47.97;
+	arPM[DB14_1].p_Current_C := 123;
+	arPM[DB15].p_Current_C := 227;
+	arPM[DB15_1].p_Current_C := 42;
+	arPM[LP_PR5A].p_Current_C := 11.7;
+	arPM[LP_PR5B].p_Current_C := 9.6;
+	arPM[LP_PR6A].p_Current_C := 0.8;
+	arPM[LP_PR6B].p_Current_C := 0.4;
+// Real_PowerA 
+	arPM[LV01].p_Real_PowerA := 326.48725;
+	arPM[DB_PR1_1].p_Real_PowerA := 300.864593505859;
+	arPM[DB1].p_Real_PowerA := -88888888.4444;
+	arPM[DB2].p_Real_PowerA := 13.6;
+	arPM[DB3].p_Real_PowerA := 28.8;
+	arPM[DB4].p_Real_PowerA := 41.8;
+	arPM[DB1_1].p_Real_PowerA := 0;
+	arPM[DB2_1].p_Real_PowerA := 6.16456890106201;
+	arPM[DB3_1].p_Real_PowerA := 9.23189353942871;
+	arPM[DB4_1].p_Real_PowerA := -1.5E+40;
+	arPM[DB5].p_Real_PowerA := -88888888.4444;
+	arPM[DB6].p_Real_PowerA := -88888888.4444;
+	arPM[DB7].p_Real_PowerA := -88888888.4444;
+	arPM[DB_MR].p_Real_PowerA := 4.8;
+	arPM[DB5_1].p_Real_PowerA := 0;
+	arPM[DB6_1].p_Real_PowerA := 0;
+	arPM[DB7_1].p_Real_PowerA := 0;
+	arPM[LV02].p_Real_PowerA := 372.88228125;
+	arPM[DB_PR1_2].p_Real_PowerA := 135.485427856445;
+	arPM[DB_AIRCOMP].p_Real_PowerA := 192.849090576172;
+	arPM[DB_AHU].p_Real_PowerA := 32.16;
+	arPM[DB8].p_Real_PowerA := -88888888.4444;
+	arPM[DB9].p_Real_PowerA := -88888888.4444;
+	arPM[DB10].p_Real_PowerA := -88888888.4444;
+	arPM[DB8_1].p_Real_PowerA := 0;
+	arPM[DB9_1].p_Real_PowerA := 0;
+	arPM[DB10_1].p_Real_PowerA := 0;
+	arPM[A1].p_Real_PowerA := 58.2002372741699;
+	arPM[A2].p_Real_PowerA := 0;
+	arPM[A3].p_Real_PowerA := 17.8884391784668;
+	arPM[A4].p_Real_PowerA := 59.194408416748;
+	arPM[A5].p_Real_PowerA := 50.7736358642578;
+	arPM[LP_PR1A].p_Real_PowerA := 0;
+	arPM[LP_PR1B].p_Real_PowerA := 0;
+	arPM[LP_PR2A].p_Real_PowerA := 0;
+	arPM[LP_PR2B].p_Real_PowerA := 0;
+	arPM[LP_PR3A].p_Real_PowerA := 0;
+	arPM[DB_WH].p_Real_PowerA := 8.16;
+	arPM[LP_PR3B].p_Real_PowerA := 0;
+	arPM[LP_PR4A ].p_Real_PowerA := 1.92591488361359;
+	arPM[LP_PR4B].p_Real_PowerA := 1.82267451286316;
+	arPM[LP_BM].p_Real_PowerA := 0.348;
+	arPM[DB_BM].p_Real_PowerA := 3.32;
+	arPM[LV03].p_Real_PowerA := 232.3538125;
+	arPM[DB_MVAC1].p_Real_PowerA := 124.836311340332;
+	arPM[DB_MVAC2].p_Real_PowerA := 71.8664169311523;
+	arPM[DB_OFF2].p_Real_PowerA := 7860.6;
+	arPM[LP_EL1].p_Real_PowerA := 0.928230285644531;
+	arPM[LP_EL2].p_Real_PowerA := 0.38;
+	arPM[DB_OFF1].p_Real_PowerA := 10.8;
+	arPM[DB_KIT].p_Real_PowerA := 10.56;
+	arPM[LP_WH2].p_Real_PowerA := 7.57289457321167;
+	arPM[LP_WH1].p_Real_PowerA := 4.67977142333984;
+	arPM[CH4].p_Real_PowerA := 13.279465675354;
+	arPM[CH5].p_Real_PowerA := 0.173617959022522;
+	arPM[CH6].p_Real_PowerA := 20.3546371459961;
+	arPM[LV04].p_Real_PowerA := 121.57978125;
+	arPM[DB_PR2].p_Real_PowerA := 114.4;
+	arPM[DB11].p_Real_PowerA := 10.72;
+	arPM[DB12].p_Real_PowerA := 9.3;
+	arPM[DB13].p_Real_PowerA := 20.48;
+	arPM[DB14].p_Real_PowerA := 36.16;
+	arPM[DB11_1].p_Real_PowerA := 6.06992387771606;
+	arPM[DB12_1].p_Real_PowerA := 4.43687963485718;
+	arPM[DB13_1].p_Real_PowerA := 10.6720571517944;
+	arPM[DB14_1].p_Real_PowerA := 31.2415618896484;
+	arPM[DB15].p_Real_PowerA := 37.12;
+	arPM[DB15_1].p_Real_PowerA := 7.1462984085083;
+	arPM[LP_PR5A].p_Real_PowerA := -2.05480074882507;
+	arPM[LP_PR5B].p_Real_PowerA := 1.89803433418274;
+	arPM[LP_PR6A].p_Real_PowerA := 0.0984331741929054;
+	arPM[LP_PR6B].p_Real_PowerA := 0.0509700253605843;
+	
+// p_Real_PowerB
+	arPM[LV01].p_Real_PowerB := 350.48725;
+	arPM[DB_PR1_1].p_Real_PowerB := 320.864593505859;
+	arPM[DB1].p_Real_PowerB := -88888888.4444;
+	arPM[DB2].p_Real_PowerB := 12.24;
+	arPM[DB3].p_Real_PowerB := 35.28;
+	arPM[DB4].p_Real_PowerB := 43.4;
+	arPM[DB1_1].p_Real_PowerB := 0;
+	arPM[DB2_1].p_Real_PowerB := 11.4156036376953;
+	arPM[DB3_1].p_Real_PowerB := -1.5E+40;
+	arPM[DB4_1].p_Real_PowerB := 15.1349725723267;
+	arPM[DB5].p_Real_PowerB := -88888888.4444;
+	arPM[DB6].p_Real_PowerB := -88888888.4444;
+	arPM[DB7].p_Real_PowerB := -88888888.4444;
+	arPM[DB_MR].p_Real_PowerB := 9.06;
+	arPM[DB5_1].p_Real_PowerB := 0;
+	arPM[DB6_1].p_Real_PowerB := 0;
+	arPM[DB7_1].p_Real_PowerB := 0;
+	arPM[LV02].p_Real_PowerB := 384.8741875;
+	arPM[DB_PR1_2].p_Real_PowerB := 152.953918457031;
+	arPM[DB_AIRCOMP].p_Real_PowerB := 199.420104980469;
+	arPM[DB_AHU].p_Real_PowerB := 32.76;
+	arPM[DB8].p_Real_PowerB := -88888888.4444;
+	arPM[DB9].p_Real_PowerB := -88888888.4444;
+	arPM[DB10].p_Real_PowerB := -88888888.4444;
+	arPM[DB8_1].p_Real_PowerB := 0;
+	arPM[DB9_1].p_Real_PowerB := 0;
+	arPM[DB10_1].p_Real_PowerB := 0;
+	arPM[A1].p_Real_PowerB := 59.1645774841309;
+	arPM[A2].p_Real_PowerB := 0;
+	arPM[A3].p_Real_PowerB := 20.5810832977295;
+	arPM[A4].p_Real_PowerB := -1.5E+40;
+	arPM[A5].p_Real_PowerB := -1.5E+40;
+	arPM[LP_PR1A].p_Real_PowerB := 0;
+	arPM[LP_PR1B].p_Real_PowerB := 0;
+	arPM[LP_PR2A].p_Real_PowerB := 0;
+	arPM[LP_PR2B].p_Real_PowerB := 0;
+	arPM[LP_PR3A].p_Real_PowerB := 0;
+	arPM[DB_WH].p_Real_PowerB := 5.88;
+	arPM[LP_PR3B].p_Real_PowerB := 0;
+	arPM[LP_PR4A ].p_Real_PowerB := -1.5E+40;
+	arPM[LP_PR4B].p_Real_PowerB := -1.5E+40;
+	arPM[LP_BM].p_Real_PowerB := 0.048;
+	arPM[DB_BM].p_Real_PowerB := 0.52;
+	arPM[LV03].p_Real_PowerB := 242.520046875;
+	arPM[DB_MVAC1].p_Real_PowerB := 124.868919372559;
+	arPM[DB_MVAC2].p_Real_PowerB := 77.7159729003906;
+	arPM[DB_OFF2].p_Real_PowerB := 6.6;
+	arPM[LP_EL1].p_Real_PowerB := 0.0135234519839287;
+	arPM[LP_EL2].p_Real_PowerB := 0.16;
+	arPM[DB_OFF1].p_Real_PowerB := 11.5;
+	arPM[DB_KIT].p_Real_PowerB := 14.88;
+	arPM[LP_WH2].p_Real_PowerB := 10.351185798645;
+	arPM[LP_WH1].p_Real_PowerB := 5.06796789169312;
+	arPM[CH4].p_Real_PowerB := 13.4788665771484;
+	arPM[CH5].p_Real_PowerB := 0.132516324520111;
+	arPM[CH6].p_Real_PowerB := 20.9350357055664;
+	arPM[LV04].p_Real_PowerB := 113.8976640625;
+	arPM[DB_PR2].p_Real_PowerB := 141.6;
+	arPM[DB11].p_Real_PowerB := 8.88;
+	arPM[DB12].p_Real_PowerB := 7.6;
+	arPM[DB13].p_Real_PowerB := 21.12;
+	arPM[DB14].p_Real_PowerB := 29.12;
+	arPM[DB11_1].p_Real_PowerB := 4.97021770477295;
+	arPM[DB12_1].p_Real_PowerB := 4.62906122207642;
+	arPM[DB13_1].p_Real_PowerB := 9.47135925292969;
+	arPM[DB14_1].p_Real_PowerB := 21.6200199127197;
+	arPM[DB15].p_Real_PowerB := 38.72;
+	arPM[DB15_1].p_Real_PowerB := 8.88123321533203;
+	arPM[LP_PR5A].p_Real_PowerB := 1.63270902633667;
+	arPM[LP_PR5B].p_Real_PowerB := 1.82756507396698;
+	arPM[LP_PR6A].p_Real_PowerB := 0.0718437507748604;
+	arPM[LP_PR6B].p_Real_PowerB := 0.0553829297423363;
+// p_Real_PowerC
+	arPM[LV01].p_Real_PowerC := 281.90271875;
+	arPM[DB_PR1_1].p_Real_PowerC := 295.549530029297;
+	arPM[DB1].p_Real_PowerC := -88888888.4444;
+	arPM[DB2].p_Real_PowerC := 11.68;
+	arPM[DB3].p_Real_PowerC := 33.84;
+	arPM[DB4].p_Real_PowerC := 2.2;
+	arPM[DB1_1].p_Real_PowerC := 0;
+	arPM[DB2_1].p_Real_PowerC := -1.5E+40;
+	arPM[DB3_1].p_Real_PowerC := 7.25864553451538;
+	arPM[DB4_1].p_Real_PowerC := 14.5833835601807;
+	arPM[DB5].p_Real_PowerC := -88888888.4444;
+	arPM[DB6].p_Real_PowerC := -88888888.4444;
+	arPM[DB7].p_Real_PowerC := -88888888.4444;
+	arPM[DB_MR].p_Real_PowerC := 5.7;
+	arPM[DB5_1].p_Real_PowerC := 0;
+	arPM[DB6_1].p_Real_PowerC := 0;
+	arPM[DB7_1].p_Real_PowerC := 0;
+	arPM[LV02].p_Real_PowerC := 370.28871875;
+	arPM[DB_PR1_2].p_Real_PowerC := 145.278213500977;
+	arPM[DB_AIRCOMP].p_Real_PowerC := 195.644317626953;
+	arPM[DB_AHU].p_Real_PowerC := 32.04;
+	arPM[DB8].p_Real_PowerC := -88888888.4444;
+	arPM[DB9].p_Real_PowerC := -88888888.4444;
+	arPM[DB10].p_Real_PowerC := -88888888.4444;
+	arPM[DB8_1].p_Real_PowerC := 0;
+	arPM[DB9_1].p_Real_PowerC := 0;
+	arPM[DB10_1].p_Real_PowerC := 0;
+	arPM[A1].p_Real_PowerC := -1.5E+40;
+	arPM[A2].p_Real_PowerC := 0;
+	arPM[A3].p_Real_PowerC := 16.4717750549316;
+	arPM[A4].p_Real_PowerC := 58.0558242797852;
+	arPM[A5].p_Real_PowerC := 44.6190452575684;
+	arPM[LP_PR1A].p_Real_PowerC := 0;
+	arPM[LP_PR1B].p_Real_PowerC := 0;
+	arPM[LP_PR2A].p_Real_PowerC := 0;
+	arPM[LP_PR2B].p_Real_PowerC := 0;
+	arPM[LP_PR3A].p_Real_PowerC := 0;
+	arPM[DB_WH].p_Real_PowerC := 5.16;
+	arPM[LP_PR3B].p_Real_PowerC := 0;
+	arPM[LP_PR4A ].p_Real_PowerC := -1.5E+40;
+	arPM[LP_PR4B].p_Real_PowerC := -1.5E+40;
+	arPM[LP_BM].p_Real_PowerC := 0;
+	arPM[DB_BM].p_Real_PowerC := 0.88;
+	arPM[LV03].p_Real_PowerC := 237.472578125;
+	arPM[DB_MVAC1].p_Real_PowerC := -1.5E+40;
+	arPM[DB_MVAC2].p_Real_PowerC := 73.6659088134766;
+	arPM[DB_OFF2].p_Real_PowerC := 7.08;
+	arPM[LP_EL1].p_Real_PowerC := 0.249511554837227;
+	arPM[LP_EL2].p_Real_PowerC := 0.06;
+	arPM[DB_OFF1].p_Real_PowerC := 11.3;
+	arPM[DB_KIT].p_Real_PowerC := 10.64;
+	arPM[LP_WH2].p_Real_PowerC := 5.57862091064453;
+	arPM[LP_WH1].p_Real_PowerC := 4.88177013397217;
+	arPM[CH4].p_Real_PowerC := 12.4203805923462;
+	arPM[CH5].p_Real_PowerC := 0;
+	arPM[CH6].p_Real_PowerC := 19.1779308319092;
+	arPM[LV04].p_Real_PowerC := 107.71028125;
+	arPM[DB_PR2].p_Real_PowerC := 128.8;
+	arPM[DB11].p_Real_PowerC := 12.16;
+	arPM[DB12].p_Real_PowerC := 7.9;
+	arPM[DB13].p_Real_PowerC := 14.72;
+	arPM[DB14].p_Real_PowerC := 21.76;
+	arPM[DB11_1].p_Real_PowerC := 2.55743432044983;
+	arPM[DB12_1].p_Real_PowerC := 4.93209791183472;
+	arPM[DB13_1].p_Real_PowerC := 8.78751564025879;
+	arPM[DB14_1].p_Real_PowerC := 24.1240062713623;
+	arPM[DB15].p_Real_PowerC := 51.52;
+	arPM[DB15_1].p_Real_PowerC := 8.43356513977051;
+	arPM[LP_PR5A].p_Real_PowerC := 2.17041778564453;
+	arPM[LP_PR5B].p_Real_PowerC := 2.04661750793457;
+	arPM[LP_PR6A].p_Real_PowerC := 0.15382182598114;
+	arPM[LP_PR6B].p_Real_PowerC := 0.0687989294528961;
+//	p_RealEnergy_IntoLoad
+	arPM[LV01].p_RealEnergy_IntoLoad := LV01_Real_RealEnergy_IntoLoad;
+	arPM[DB_PR1_1].p_RealEnergy_IntoLoad := DB_PR1_1_Real_RealEnergy_IntoLoad;
+	arPM[DB1].p_RealEnergy_IntoLoad := DB1_Real_RealEnergy_IntoLoad;
+	arPM[DB2].p_RealEnergy_IntoLoad := DB2_Real_RealEnergy_IntoLoad;
+	arPM[DB3].p_RealEnergy_IntoLoad := DB3_Real_RealEnergy_IntoLoad;
+	arPM[DB4].p_RealEnergy_IntoLoad := DB4_Real_RealEnergy_IntoLoad;
+	arPM[DB1_1].p_RealEnergy_IntoLoad := DB1_1_Real_RealEnergy_IntoLoad;
+	arPM[DB2_1].p_RealEnergy_IntoLoad := DB2_1_Real_RealEnergy_IntoLoad;
+	arPM[DB3_1].p_RealEnergy_IntoLoad := DB3_1_Real_RealEnergy_IntoLoad;
+	arPM[DB4_1].p_RealEnergy_IntoLoad := DB4_1_Real_RealEnergy_IntoLoad;
+	arPM[DB5].p_RealEnergy_IntoLoad := DB5_Real_RealEnergy_IntoLoad;
+	arPM[DB6].p_RealEnergy_IntoLoad := DB6_Real_RealEnergy_IntoLoad;
+	arPM[DB7].p_RealEnergy_IntoLoad := DB7_Real_RealEnergy_IntoLoad;
+	arPM[DB_MR].p_RealEnergy_IntoLoad := DB_MR_Real_RealEnergy_IntoLoad;
+	arPM[DB5_1].p_RealEnergy_IntoLoad := DB5_1_Real_RealEnergy_IntoLoad;
+	arPM[DB6_1].p_RealEnergy_IntoLoad := DB6_1_Real_RealEnergy_IntoLoad;
+	arPM[DB7_1].p_RealEnergy_IntoLoad := DB7_1_Real_RealEnergy_IntoLoad;
+	arPM[LV02].p_RealEnergy_IntoLoad := LV02_Real_RealEnergy_IntoLoad;
+	arPM[DB_PR1_2].p_RealEnergy_IntoLoad := DB_PR1_2_Real_RealEnergy_IntoLoad;
+	arPM[DB_AIRCOMP].p_RealEnergy_IntoLoad := DB_AIRCOMP_Real_RealEnergy_IntoLoad;
+	arPM[DB_AHU].p_RealEnergy_IntoLoad := DB_AHU_Real_RealEnergy_IntoLoad;
+	arPM[DB8].p_RealEnergy_IntoLoad := DB8_Real_RealEnergy_IntoLoad;
+	arPM[DB9].p_RealEnergy_IntoLoad := DB9_Real_RealEnergy_IntoLoad;
+	arPM[DB10].p_RealEnergy_IntoLoad := DB10_Real_RealEnergy_IntoLoad;
+	arPM[DB8_1].p_RealEnergy_IntoLoad := DB8_1_Real_RealEnergy_IntoLoad;
+	arPM[DB9_1].p_RealEnergy_IntoLoad := DB9_1_Real_RealEnergy_IntoLoad;
+	arPM[DB10_1].p_RealEnergy_IntoLoad := DB10_1_Real_RealEnergy_IntoLoad;
+	arPM[A1].p_RealEnergy_IntoLoad := A1_Real_RealEnergy_IntoLoad;
+	arPM[A2].p_RealEnergy_IntoLoad := A2_Real_RealEnergy_IntoLoad;
+	arPM[A3].p_RealEnergy_IntoLoad := A3_Real_RealEnergy_IntoLoad;
+	arPM[A4].p_RealEnergy_IntoLoad := A4_Real_RealEnergy_IntoLoad;
+	arPM[A5].p_RealEnergy_IntoLoad := A5_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR1A].p_RealEnergy_IntoLoad := LP_PR1A_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR1B].p_RealEnergy_IntoLoad := LP_PR1B_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR2A].p_RealEnergy_IntoLoad := LP_PR2A_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR2B].p_RealEnergy_IntoLoad := LP_PR2B_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR3A].p_RealEnergy_IntoLoad := LP_PR3A_Real_RealEnergy_IntoLoad;
+	arPM[DB_WH].p_RealEnergy_IntoLoad := DB_WH_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR3B].p_RealEnergy_IntoLoad := LP_PR3B_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR4A].p_RealEnergy_IntoLoad := LP_PR4A_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR4B].p_RealEnergy_IntoLoad := LP_PR4B_Real_RealEnergy_IntoLoad;
+	arPM[LP_BM].p_RealEnergy_IntoLoad := LP_BM_Real_RealEnergy_IntoLoad;
+	arPM[DB_BM].p_RealEnergy_IntoLoad := DB_BM_Real_RealEnergy_IntoLoad;
+	arPM[LV03].p_RealEnergy_IntoLoad := LV03_Real_RealEnergy_IntoLoad;
+	arPM[DB_MVAC1].p_RealEnergy_IntoLoad := DB_MVAC1_Real_RealEnergy_IntoLoad;
+	arPM[DB_MVAC2].p_RealEnergy_IntoLoad := DB_MVAC2_Real_RealEnergy_IntoLoad;
+	arPM[DB_OFF2].p_RealEnergy_IntoLoad := DB_OFF2_Real_RealEnergy_IntoLoad;
+	arPM[LP_EL1].p_RealEnergy_IntoLoad := LP_EL1_Real_RealEnergy_IntoLoad;
+	arPM[LP_EL2].p_RealEnergy_IntoLoad := LP_EL2_Real_RealEnergy_IntoLoad;
+	arPM[DB_OFF1].p_RealEnergy_IntoLoad := DB_OFF1_Real_RealEnergy_IntoLoad;
+	arPM[DB_KIT].p_RealEnergy_IntoLoad := DB_KIT_Real_RealEnergy_IntoLoad;
+	arPM[LP_WH2].p_RealEnergy_IntoLoad := LP_WH2_Real_RealEnergy_IntoLoad;
+	arPM[LP_WH1].p_RealEnergy_IntoLoad := LP_WH1_Real_RealEnergy_IntoLoad;
+	arPM[CH4].p_RealEnergy_IntoLoad := CH4_Real_RealEnergy_IntoLoad;
+	arPM[CH5].p_RealEnergy_IntoLoad := CH5_Real_RealEnergy_IntoLoad;
+	arPM[CH6].p_RealEnergy_IntoLoad := CH6_Real_RealEnergy_IntoLoad;
+	arPM[LV04].p_RealEnergy_IntoLoad := LV04_Real_RealEnergy_IntoLoad;
+	arPM[DB_PR2].p_RealEnergy_IntoLoad := DB_PR2_Real_RealEnergy_IntoLoad;
+	arPM[DB11].p_RealEnergy_IntoLoad := DB11_Real_RealEnergy_IntoLoad;
+	arPM[DB12].p_RealEnergy_IntoLoad := DB12_Real_RealEnergy_IntoLoad;
+	arPM[DB13].p_RealEnergy_IntoLoad := DB13_Real_RealEnergy_IntoLoad;
+	arPM[DB14].p_RealEnergy_IntoLoad := DB14_Real_RealEnergy_IntoLoad;
+	arPM[DB11_1].p_RealEnergy_IntoLoad := DB11_1_Real_RealEnergy_IntoLoad;
+	arPM[DB12_1].p_RealEnergy_IntoLoad := DB12_1_Real_RealEnergy_IntoLoad;
+	arPM[DB13_1].p_RealEnergy_IntoLoad := DB13_1_Real_RealEnergy_IntoLoad;
+	arPM[DB14_1].p_RealEnergy_IntoLoad := DB14_1_Real_RealEnergy_IntoLoad;
+	arPM[DB15].p_RealEnergy_IntoLoad := DB15_Real_RealEnergy_IntoLoad;
+	arPM[DB15_1].p_RealEnergy_IntoLoad := DB15_1_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR5A].p_RealEnergy_IntoLoad := LP_PR5A_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR5B].p_RealEnergy_IntoLoad := LP_PR5B_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR6A].p_RealEnergy_IntoLoad := LP_PR6A_Real_RealEnergy_IntoLoad;
+	arPM[LP_PR6B].p_RealEnergy_IntoLoad := LP_PR6B_Real_RealEnergy_IntoLoad;
+	
+// update dentalRealEnergy_IntoLoad
+	arPM[LV01].p_dentalRealEnergy_IntoLoad := 81.4864739239071;
+	arPM[DB_PR1_1].p_dentalRealEnergy_IntoLoad := 80.361624988331;
+	arPM[DB1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB2].p_dentalRealEnergy_IntoLoad := 3.43962071209237;
+	arPM[DB3].p_dentalRealEnergy_IntoLoad := 7.61364692757743;
+	arPM[DB4].p_dentalRealEnergy_IntoLoad := 7.02333364320482;
+	arPM[DB1_1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB2_1].p_dentalRealEnergy_IntoLoad := 1.16203402435553;
+	arPM[DB3_1].p_dentalRealEnergy_IntoLoad := 1.98010597750182;
+	arPM[DB4_1].p_dentalRealEnergy_IntoLoad := 3.70456446964543;
+	arPM[DB5].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB6].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB7].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB_MR].p_dentalRealEnergy_IntoLoad := 0.599609556567453;
+	arPM[DB5_1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB6_1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB7_1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[LV02].p_dentalRealEnergy_IntoLoad := 96.1931765361507;
+	arPM[DB_PR1_2].p_dentalRealEnergy_IntoLoad := 39.2256205261452;
+	arPM[DB_AIRCOMP].p_dentalRealEnergy_IntoLoad := 48.2615970995338;
+	arPM[DB_AHU].p_dentalRealEnergy_IntoLoad := 8.1342381704887;
+	arPM[DB8].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB9].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB10].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB8_1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB9_1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB10_1].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[A1].p_dentalRealEnergy_IntoLoad := 14.678813795659;
+	arPM[A2].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[A3].p_dentalRealEnergy_IntoLoad := 5.05717207399526;
+	arPM[A4].p_dentalRealEnergy_IntoLoad := 14.8229060146791;
+	arPM[A5].p_dentalRealEnergy_IntoLoad := 11.550618202094;
+	arPM[LP_PR1A].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[LP_PR1B].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[LP_PR2A].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[LP_PR2B].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[LP_PR3A].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[DB_WH].p_dentalRealEnergy_IntoLoad := 1.58036627312352;
+	arPM[LP_PR3B].p_dentalRealEnergy_IntoLoad := 0;
+	arPM[LP_PR4A].p_dentalRealEnergy_IntoLoad := 0.460165473644789;
+	arPM[LP_PR4B].p_dentalRealEnergy_IntoLoad := 0.469461745839634;
+	arPM[LP_BM].p_dentalRealEnergy_IntoLoad := 0.0511294970716433;
+	arPM[DB_BM].p_dentalRealEnergy_IntoLoad := 0.57172073998292;
+	arPM[LV03].p_dentalRealEnergy_IntoLoad := 60.4118248581952;
+	arPM[DB_MVAC1].p_dentalRealEnergy_IntoLoad := 30.0594961420288;
+	arPM[DB_MVAC2].p_dentalRealEnergy_IntoLoad := 18.4763409872529;
+	arPM[DB_OFF2].p_dentalRealEnergy_IntoLoad := 2.66338198382287;
+	arPM[LP_EL1].p_dentalRealEnergy_IntoLoad := 0.515943106813855;
+	arPM[LP_EL2].p_dentalRealEnergy_IntoLoad := 0.260295621455638;
+	arPM[DB_OFF1].p_dentalRealEnergy_IntoLoad := 2.56577112577701;
+	arPM[DB_KIT].p_dentalRealEnergy_IntoLoad := 1.849958166774;
+	arPM[LP_WH2].p_dentalRealEnergy_IntoLoad := 2.35195686529559;
+	arPM[LP_WH1].p_dentalRealEnergy_IntoLoad := 1.20386724923233;
+	arPM[CH4].p_dentalRealEnergy_IntoLoad := 1.7662917170204;
+	arPM[CH5].p_dentalRealEnergy_IntoLoad := 1.56177372873383;
+	arPM[CH6].p_dentalRealEnergy_IntoLoad := 5.14083852374886;
+	arPM[LV04].p_dentalRealEnergy_IntoLoad := 31.3144928883328;
+	arPM[DB_PR2].p_dentalRealEnergy_IntoLoad := 31.0449009946823;
+	arPM[DB11].p_dentalRealEnergy_IntoLoad := 2.16138328530128;
+	arPM[DB12].p_dentalRealEnergy_IntoLoad := 2.62154875894607;
+	arPM[DB13].p_dentalRealEnergy_IntoLoad := 4.88054290229322;
+	arPM[DB14].p_dentalRealEnergy_IntoLoad := 8.05521985683253;
+	arPM[DB11_1].p_dentalRealEnergy_IntoLoad := 0.492702426326744;
+	arPM[DB12_1].p_dentalRealEnergy_IntoLoad := 0.952867899971534;
+	arPM[DB13_1].p_dentalRealEnergy_IntoLoad := 2.31012364041879;
+	arPM[DB14_1].p_dentalRealEnergy_IntoLoad := 7.18601840661459;
+	arPM[DB15].p_dentalRealEnergy_IntoLoad := 11.6575253323347;
+	arPM[DB15_1].p_dentalRealEnergy_IntoLoad := 1.99869852189151;
+	arPM[LP_PR5A].p_dentalRealEnergy_IntoLoad := 0.134795946825241;
+	arPM[LP_PR5B].p_dentalRealEnergy_IntoLoad := 0.488054290229322;
+	arPM[LP_PR6A].p_dentalRealEnergy_IntoLoad := 0.0278888165845327;
+	arPM[LP_PR6B].p_dentalRealEnergy_IntoLoad := 0.0139444082922663;
+
+
+// p_RealEnergy_OutLoad
+	arPM[LV01].p_ReactiveEnergy_OutLoad := 6873.314;
+	arPM[DB_PR1_1].p_ReactiveEnergy_OutLoad := 7541.118;
+	arPM[DB1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB3].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB4].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB1_1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB2_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB3_1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB4_1].p_ReactiveEnergy_OutLoad := 182030.718;
+	arPM[DB5].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB6].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[DB7].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_MR].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[DB5_1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB6_1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB7_1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LV02].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_PR1_2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_AIRCOMP].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB_AHU].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB8].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB9].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB10].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB8_1].p_ReactiveEnergy_OutLoad := 9729.96;
+	arPM[DB9_1].p_ReactiveEnergy_OutLoad := 11119.27;
+	arPM[DB10_1].p_ReactiveEnergy_OutLoad := 24.853;
+	arPM[A1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[A2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[A3].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[A4].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[A5].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR1A].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR1B].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR2A].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR2B].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR3A].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB_WH].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR3B].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR4A ].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[LP_PR4B].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[LP_BM].p_ReactiveEnergy_OutLoad := 206.65;
+	arPM[DB_BM].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LV03].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB_MVAC1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB_MVAC2].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB_OFF2].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_EL1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_EL2].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB_OFF1].p_ReactiveEnergy_OutLoad := 212932.137;
+	arPM[DB_KIT].p_ReactiveEnergy_OutLoad := 216938.692;
+	arPM[LP_WH2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_WH1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[CH4].p_ReactiveEnergy_OutLoad := 25920.378;
+	arPM[CH5].p_ReactiveEnergy_OutLoad := 27.906;
+	arPM[CH6].p_ReactiveEnergy_OutLoad := 785.01;
+	arPM[LV04].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_PR2].p_ReactiveEnergy_OutLoad := 32352.822;
+	arPM[DB11].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB12].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB13].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB14].p_ReactiveEnergy_OutLoad := 7123.4;
+	arPM[DB11_1].p_ReactiveEnergy_OutLoad := 11321.767;
+	arPM[DB12_1].p_ReactiveEnergy_OutLoad := 0.004;
+	arPM[DB13_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB14_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB15].p_ReactiveEnergy_OutLoad := 4383.502;
+	arPM[DB15_1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR5A].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR5B].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR6A].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR6B].p_ReactiveEnergy_OutLoad := -88888888.4444;
+
+// p_ReactiveEnergy_IntoLoad
+	arPM[LV01].p_ReactiveEnergy_IntoLoad := 4348107.776;
+	arPM[DB_PR1_1].p_ReactiveEnergy_IntoLoad := 9371653.523;
+	arPM[DB1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB2].p_ReactiveEnergy_IntoLoad := 1578355.8;
+	arPM[DB3].p_ReactiveEnergy_IntoLoad := 1391290.1;
+	arPM[DB4].p_ReactiveEnergy_IntoLoad := 1935924.3;
+	arPM[DB1_1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB2_1].p_ReactiveEnergy_IntoLoad := 594440.661;
+	arPM[DB3_1].p_ReactiveEnergy_IntoLoad := -0.001;
+	arPM[DB4_1].p_ReactiveEnergy_IntoLoad := 889429.136;
+	arPM[DB5].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB6].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB7].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB_MR].p_ReactiveEnergy_IntoLoad := 1745934.3;
+	arPM[DB5_1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB6_1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB7_1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[LV02].p_ReactiveEnergy_IntoLoad := 5022180.352;
+	arPM[DB_PR1_2].p_ReactiveEnergy_IntoLoad := 5052467.319;
+	arPM[DB_AIRCOMP].p_ReactiveEnergy_IntoLoad := 3158507.616;
+	arPM[DB_AHU].p_ReactiveEnergy_IntoLoad := 2147945.1;
+	arPM[DB8].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB9].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB10].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB8_1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB9_1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB10_1].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[A1].p_ReactiveEnergy_IntoLoad := 242355.492;
+	arPM[A2].p_ReactiveEnergy_IntoLoad := 331841.589;
+	arPM[A3].p_ReactiveEnergy_IntoLoad := 116816.749;
+	arPM[A4].p_ReactiveEnergy_IntoLoad := -0.001;
+	arPM[A5].p_ReactiveEnergy_IntoLoad := -0.001;
+	arPM[LP_PR1A].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[LP_PR1B].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[LP_PR2A].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[LP_PR2B].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[LP_PR3A].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[DB_WH].p_ReactiveEnergy_IntoLoad := 1923034.4;
+	arPM[LP_PR3B].p_ReactiveEnergy_IntoLoad := 0;
+	arPM[LP_PR4A ].p_ReactiveEnergy_IntoLoad := -0.001;
+	arPM[LP_PR4B].p_ReactiveEnergy_IntoLoad := -0.001;
+	arPM[LP_BM].p_ReactiveEnergy_IntoLoad := 69025.3;
+	arPM[DB_BM].p_ReactiveEnergy_IntoLoad := 354015.9;
+	arPM[LV03].p_ReactiveEnergy_IntoLoad := 3017196.544;
+	arPM[DB_MVAC1].p_ReactiveEnergy_IntoLoad := 3313250.899;
+	arPM[DB_MVAC2].p_ReactiveEnergy_IntoLoad := 1470224.327;
+	arPM[DB_OFF2].p_ReactiveEnergy_IntoLoad := 675362;
+	arPM[LP_EL1].p_ReactiveEnergy_IntoLoad := 1784.744;
+	arPM[LP_EL2].p_ReactiveEnergy_IntoLoad := 304074.4;
+	arPM[DB_OFF1].p_ReactiveEnergy_IntoLoad := 808687.1;
+	arPM[DB_KIT].p_ReactiveEnergy_IntoLoad := 743740.1;
+	arPM[LP_WH2].p_ReactiveEnergy_IntoLoad := 868033.533;
+	arPM[LP_WH1].p_ReactiveEnergy_IntoLoad := 1928.061;
+	arPM[CH4].p_ReactiveEnergy_IntoLoad := 156911.535;
+	arPM[CH5].p_ReactiveEnergy_IntoLoad := 106493.719;
+	arPM[CH6].p_ReactiveEnergy_IntoLoad := 154188.976;
+	arPM[LV04].p_ReactiveEnergy_IntoLoad := 1347330.688;
+	arPM[DB_PR2].p_ReactiveEnergy_IntoLoad := 14994240.4;
+	arPM[DB11].p_ReactiveEnergy_IntoLoad := 776439.1;
+	arPM[DB12].p_ReactiveEnergy_IntoLoad := 2161107.6;
+	arPM[DB13].p_ReactiveEnergy_IntoLoad := 2181983.7;
+	arPM[DB14].p_ReactiveEnergy_IntoLoad := 4755275;
+	arPM[DB11_1].p_ReactiveEnergy_IntoLoad := 163954.07;
+	arPM[DB12_1].p_ReactiveEnergy_IntoLoad := 155272.319;
+	arPM[DB13_1].p_ReactiveEnergy_IntoLoad := 1293062.341;
+	arPM[DB14_1].p_ReactiveEnergy_IntoLoad := 4078085.288;
+	arPM[DB15].p_ReactiveEnergy_IntoLoad := 4564234.1;
+	arPM[DB15_1].p_ReactiveEnergy_IntoLoad := 3852128.895;
+	arPM[LP_PR5A].p_ReactiveEnergy_IntoLoad := 56928.489;
+	arPM[LP_PR5B].p_ReactiveEnergy_IntoLoad := 4988.717;
+	arPM[LP_PR6A].p_ReactiveEnergy_IntoLoad := 4737.807;
+	arPM[LP_PR6B].p_ReactiveEnergy_IntoLoad := 723.341;
+// p_ReactiveEnergy_OutLoad
+	arPM[LV01].p_ReactiveEnergy_OutLoad := 6873.314;
+	arPM[DB_PR1_1].p_ReactiveEnergy_OutLoad := 7541.118;
+	arPM[DB1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB3].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB4].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB1_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB2_1].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[DB3_1].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[DB4_1].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[DB5].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB6].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB7].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_MR].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB5_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB6_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB7_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LV02].p_ReactiveEnergy_OutLoad := 9729.96;
+	arPM[DB_PR1_2].p_ReactiveEnergy_OutLoad := 11119.27;
+	arPM[DB_AIRCOMP].p_ReactiveEnergy_OutLoad := 24.853;
+	arPM[DB_AHU].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB8].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB9].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB10].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB8_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB9_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB10_1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[A1].p_ReactiveEnergy_OutLoad := 0;
+	arPM[A2].p_ReactiveEnergy_OutLoad := 0;
+	arPM[A3].p_ReactiveEnergy_OutLoad := 184.122;
+	arPM[A4].p_ReactiveEnergy_OutLoad := 49.898;
+	arPM[A5].p_ReactiveEnergy_OutLoad := 206.65;
+	arPM[LP_PR1A].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR1B].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR2A].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR2B].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR3A].p_ReactiveEnergy_OutLoad := 0;
+	arPM[DB_WH].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_PR3B].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LP_PR4A ].p_ReactiveEnergy_OutLoad := 212934.039;
+	arPM[LP_PR4B].p_ReactiveEnergy_OutLoad := -0.001;
+	arPM[LP_BM].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_BM].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LV03].p_ReactiveEnergy_OutLoad := 25920.378;
+	arPM[DB_MVAC1].p_ReactiveEnergy_OutLoad := 27.906;
+	arPM[DB_MVAC2].p_ReactiveEnergy_OutLoad := 785.01;
+	arPM[DB_OFF2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_EL1].p_ReactiveEnergy_OutLoad := 32356.372;
+	arPM[LP_EL2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_OFF1].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB_KIT].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[LP_WH2].p_ReactiveEnergy_OutLoad := 7123.4;
+	arPM[LP_WH1].p_ReactiveEnergy_OutLoad := 11322.61;
+	arPM[CH4].p_ReactiveEnergy_OutLoad := 0.004;
+	arPM[CH5].p_ReactiveEnergy_OutLoad := 0;
+	arPM[CH6].p_ReactiveEnergy_OutLoad := 0;
+	arPM[LV04].p_ReactiveEnergy_OutLoad := 4383.502;
+	arPM[DB_PR2].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB11].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB12].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB13].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB14].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB11_1].p_ReactiveEnergy_OutLoad := 3757.681;
+	arPM[DB12_1].p_ReactiveEnergy_OutLoad := 31580.689;
+	arPM[DB13_1].p_ReactiveEnergy_OutLoad := 74213.876;
+	arPM[DB14_1].p_ReactiveEnergy_OutLoad := 2244.206;
+	arPM[DB15].p_ReactiveEnergy_OutLoad := -88888888.4444;
+	arPM[DB15_1].p_ReactiveEnergy_OutLoad := 1914.601;
+	arPM[LP_PR5A].p_ReactiveEnergy_OutLoad := 108167.521;
+	arPM[LP_PR5B].p_ReactiveEnergy_OutLoad := 166369.745;
+	arPM[LP_PR6A].p_ReactiveEnergy_OutLoad := 17945.167;
+	arPM[LP_PR6B].p_ReactiveEnergy_OutLoad := 15140.298;
+// p_Current_Avg
+	arPM[LV01].p_Current_Avg := 1615.2;
+	arPM[DB_PR1_1].p_Current_Avg := 1837.2587890625;
+	arPM[DB1].p_Current_Avg := 71.04;
+	arPM[DB2].p_Current_Avg := 77.76;
+	arPM[DB3].p_Current_Avg := 126.6;
+	arPM[DB4].p_Current_Avg := 322;
+	arPM[DB1_1].p_Current_Avg := 37.7270994567871;
+	arPM[DB2_1].p_Current_Avg := 33.3129005432129;
+	arPM[DB3_1].p_Current_Avg := 57.6444261169434;
+	arPM[DB4_1].p_Current_Avg := 20.1155738830566;
+	arPM[DB5].p_Current_Avg := 410.8;
+	arPM[DB6].p_Current_Avg := 381.8;
+	arPM[DB7].p_Current_Avg := 395.76;
+	arPM[DB_MR].p_Current_Avg := 0.9;
+	arPM[DB5_1].p_Current_Avg := 410.8;
+	arPM[DB6_1].p_Current_Avg := 381.8;
+	arPM[DB7_1].p_Current_Avg := 395.76;
+	arPM[LV02].p_Current_Avg := 0.9;
+	arPM[DB_PR1_2].p_Current_Avg := 159.208203125;
+	arPM[DB_AIRCOMP].p_Current_Avg := 251.591796875;
+	arPM[DB_AHU].p_Current_Avg := 234.554837036133;
+	arPM[DB8].p_Current_Avg := 147.245162963867;
+	arPM[DB9].p_Current_Avg := 169.225698242187;
+	arPM[DB10].p_Current_Avg := 226.534301757813;
+	arPM[DB8_1].p_Current_Avg := 1768;
+	arPM[DB9_1].p_Current_Avg := 848.735412597656;
+	arPM[DB10_1].p_Current_Avg := 750.340087890625;
+	arPM[A1].p_Current_Avg := 230.4;
+	arPM[A2].p_Current_Avg := 392.64;
+	arPM[A3].p_Current_Avg := 390.48;
+	arPM[A4].p_Current_Avg := 112.7;
+	arPM[A5].p_Current_Avg := 189.853577270508;
+	arPM[LP_PR1A].p_Current_Avg := 202.786422729492;
+	arPM[LP_PR1B].p_Current_Avg := 172.533237915039;
+	arPM[LP_PR2A].p_Current_Avg := 217.946762084961;
+	arPM[LP_PR2B].p_Current_Avg := 76.3979942321777;
+	arPM[LP_PR3A].p_Current_Avg := 36.3020057678223;
+	arPM[DB_WH].p_Current_Avg := 280.733093261719;
+	arPM[LP_PR3B].p_Current_Avg := 0;
+	arPM[LP_PR4A ].p_Current_Avg := 0.628745019435883;
+	arPM[LP_PR4B].p_Current_Avg := 290.214324951172;
+	arPM[LP_BM].p_Current_Avg := 169.442260742188;
+	arPM[DB_BM].p_Current_Avg := 6.16329383850098;
+	arPM[LV03].p_Current_Avg := 6.09428262710571;
+	arPM[DB_MVAC1].p_Current_Avg := 5.7135124206543;
+	arPM[DB_MVAC2].p_Current_Avg := 8.94935321807861;
+	arPM[DB_OFF2].p_Current_Avg := 6.0229606628418;
+	arPM[LP_EL1].p_Current_Avg := 35.4;
+	arPM[LP_EL2].p_Current_Avg := 6.0403881072998;
+	arPM[DB_OFF1].p_Current_Avg := 8.50614547729492;
+	arPM[DB_KIT].p_Current_Avg := 8.76326274871826;
+	arPM[LP_WH2].p_Current_Avg := 3.42;
+	arPM[LP_WH1].p_Current_Avg := 12.64;
+	arPM[CH4].p_Current_Avg := 1296;
+	arPM[CH5].p_Current_Avg := 785.527038574219;
+	arPM[CH6].p_Current_Avg := 380.980133056641;
+	arPM[LV04].p_Current_Avg := 30.24;
+	arPM[DB_PR2].p_Current_Avg := 10.6796808242798;
+	arPM[DB11].p_Current_Avg := 1.52;
+	arPM[DB12].p_Current_Avg := 72.8;
+	arPM[DB13].p_Current_Avg := 20;
+	arPM[DB14].p_Current_Avg := 64.8182525634766;
+	arPM[DB11_1].p_Current_Avg := 24.2447490692139;
+	arPM[DB12_1].p_Current_Avg := 14.8973999023438;
+	arPM[DB13_1].p_Current_Avg := 42.1285743713379;
+	arPM[DB14_1].p_Current_Avg := 115.208984375;
+	arPM[DB15].p_Current_Avg := 627.2;
+	arPM[DB15_1].p_Current_Avg := 497.6;
+	arPM[LP_PR5A].p_Current_Avg := 68.56;
+	arPM[LP_PR5B].p_Current_Avg := 47.3;
+	arPM[LP_PR6A].p_Current_Avg := 120.64;
+	arPM[LP_PR6B].p_Current_Avg := 140.48;
+// p_PowerFactor
+	arPM[LV01].p_PowerFactor := 0.955206334590912;
+	arPM[DB_PR1_1].p_PowerFactor := 0.831385016441345;
+	arPM[DB1].p_PowerFactor := 0.918;
+	arPM[DB2].p_PowerFactor := 0.916;
+	arPM[DB3].p_PowerFactor := 0.928;
+	arPM[DB4].p_PowerFactor := 0.604;
+	arPM[DB1_1].p_PowerFactor := 0.897019028663635;
+	arPM[DB2_1].p_PowerFactor := 0.897019028663635;
+	arPM[DB3_1].p_PowerFactor := 1.2460150718689;
+	arPM[DB4_1].p_PowerFactor := 0.944972991943359;
+	arPM[DB5].p_PowerFactor := 0.78;
+	arPM[DB6].p_PowerFactor := 1.23327100276947;
+	arPM[DB7].p_PowerFactor := 0.8;
+	arPM[DB_MR].p_PowerFactor := 0.599858999252319;
+	arPM[DB5_1].p_PowerFactor := 0.82;
+	arPM[DB6_1].p_PowerFactor := 0.781;
+	arPM[DB7_1].p_PowerFactor := 0.79;
+	arPM[LV02].p_PowerFactor := 0.68;
+	arPM[DB_PR1_2].p_PowerFactor := 0.914165019989014;
+	arPM[DB_AIRCOMP].p_PowerFactor := 0.571097016334534;
+	arPM[DB_AHU].p_PowerFactor := 0.948;
+	arPM[DB8].p_PowerFactor := 0.943684995174408;
+	arPM[DB9].p_PowerFactor := 0.947;
+	arPM[DB10].p_PowerFactor := 0.616985976696014;
+	arPM[DB8_1].p_PowerFactor := 0.958119094371796;
+	arPM[DB9_1].p_PowerFactor := 0.85529500246048;
+	arPM[DB10_1].p_PowerFactor := 0.904770016670227;
+	arPM[A1].p_PowerFactor := 0.95;
+	arPM[A2].p_PowerFactor := 0.779;
+	arPM[A3].p_PowerFactor := 0.831;
+	arPM[A4].p_PowerFactor := 0.916;
+	arPM[A5].p_PowerFactor := 0.934426009654999;
+	arPM[LP_PR1A].p_PowerFactor := 0.550840973854065;
+	arPM[LP_PR1B].p_PowerFactor := 1.30376195907593;
+	arPM[LP_PR2A].p_PowerFactor := 0.584438025951386;
+	arPM[LP_PR2B].p_PowerFactor := 1.02444791793823;
+	arPM[LP_PR3A].p_PowerFactor := 1.1737699508667;
+	arPM[DB_WH].p_PowerFactor := 0.897457003593445;
+	arPM[LP_PR3B].p_PowerFactor := 0.750712990760803;
+	arPM[LP_PR4A ].p_PowerFactor := 1.02824699878693;
+	arPM[LP_PR4B].p_PowerFactor := 0.87849098443985;
+	arPM[LP_BM].p_PowerFactor := 0.936347007751465;
+	arPM[DB_BM].p_PowerFactor := 1.16795301437378;
+	arPM[LV03].p_PowerFactor := 1.26467895507813;
+	arPM[DB_MVAC1].p_PowerFactor := 1.03083896636963;
+	arPM[DB_MVAC2].p_PowerFactor := 1.02593994140625;
+	arPM[DB_OFF2].p_PowerFactor := 1.13111698627472;
+	arPM[LP_EL1].p_PowerFactor := 0.788;
+	arPM[LP_EL2].p_PowerFactor := 1.08950698375702;
+	arPM[DB_OFF1].p_PowerFactor := 1.02715396881104;
+	arPM[DB_KIT].p_PowerFactor := 1.0314040184021;
+	arPM[LP_WH2].p_PowerFactor := 1;
+	arPM[LP_WH1].p_PowerFactor := 0.738;
+	arPM[CH4].p_PowerFactor := 0.94951206445694;
+	arPM[CH5].p_PowerFactor := 0.878521025180817;
+	arPM[CH6].p_PowerFactor := 0.903286993503571;
+	arPM[LV04].p_PowerFactor := 0.978;
+	arPM[DB_PR2].p_PowerFactor := 1.03170502185822;
+	arPM[DB11].p_PowerFactor := 0.968;
+	arPM[DB12].p_PowerFactor := 0.92;
+	arPM[DB13].p_PowerFactor := 0.947;
+	arPM[DB14].p_PowerFactor := 0.962938010692596;
+	arPM[DB11_1].p_PowerFactor := 1.01076698303223;
+	arPM[DB12_1].p_PowerFactor := 0.723228991031647;
+	arPM[DB13_1].p_PowerFactor := 1.15596497058868;
+	arPM[DB14_1].p_PowerFactor := 0.879800021648407;
+	arPM[DB15].p_PowerFactor := 0.954704165458679;
+	arPM[DB15_1].p_PowerFactor := 0.939;
+	arPM[LP_PR5A].p_PowerFactor := 0.972;
+	arPM[LP_PR5B].p_PowerFactor := 0.87;
+	arPM[LP_PR6A].p_PowerFactor := 0.872;
+	arPM[LP_PR6B].p_PowerFactor := 0.86;
+// PowerTotal
+	arPM[LV01].p_Real_PowerTotal := 923.415375;
+	arPM[DB_PR1_1].p_Real_PowerTotal := 994.784118652344;
+	arPM[DB1].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB2].p_Real_PowerTotal := 56.96;
+	arPM[DB3].p_Real_PowerTotal := 82.56;
+	arPM[DB4].p_Real_PowerTotal := 73.4;
+	arPM[DB1_1].p_Real_PowerTotal := 0;
+	arPM[DB2_1].p_Real_PowerTotal := -1.5E+40;
+	arPM[DB3_1].p_Real_PowerTotal := 24.2024536132813;
+	arPM[DB4_1].p_Real_PowerTotal := 38.3368835449219;
+	arPM[DB5].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB6].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB7].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB_MR].p_Real_PowerTotal := 2.46;
+	arPM[DB5_1].p_Real_PowerTotal := 0;
+	arPM[DB6_1].p_Real_PowerTotal := 0;
+	arPM[DB7_1].p_Real_PowerTotal := 0;
+	arPM[LV02].p_Real_PowerTotal := 1189.95925;
+	arPM[DB_PR1_2].p_Real_PowerTotal := 419.044616699219;
+	arPM[DB_AIRCOMP].p_Real_PowerTotal := 555.449096679688;
+	arPM[DB_AHU].p_Real_PowerTotal := 112.56;
+	arPM[DB8].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB9].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB10].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB8_1].p_Real_PowerTotal := 0;
+	arPM[DB9_1].p_Real_PowerTotal := 0;
+	arPM[DB10_1].p_Real_PowerTotal := 0;
+	arPM[A1].p_Real_PowerTotal := 172.652557373047;
+	arPM[A2].p_Real_PowerTotal := 0;
+	arPM[A3].p_Real_PowerTotal := 94.6016159057617;
+	arPM[A4].p_Real_PowerTotal := 174.430236816406;
+	arPM[A5].p_Real_PowerTotal := 82.7287521362305;
+	arPM[LP_PR1A].p_Real_PowerTotal := 0;
+	arPM[LP_PR1B].p_Real_PowerTotal := 0;
+	arPM[LP_PR2A].p_Real_PowerTotal := 0;
+	arPM[LP_PR2B].p_Real_PowerTotal := 0;
+	arPM[LP_PR3A].p_Real_PowerTotal := 0;
+	arPM[DB_WH].p_Real_PowerTotal := 12.12;
+	arPM[LP_PR3B].p_Real_PowerTotal := 0;
+	arPM[LP_PR4A ].p_Real_PowerTotal := 5.65197658538818;
+	arPM[LP_PR4B].p_Real_PowerTotal := 5.59657144546509;
+	arPM[LP_BM].p_Real_PowerTotal := 2.232;
+	arPM[DB_BM].p_Real_PowerTotal := 7.64;
+	arPM[LV03].p_Real_PowerTotal := 841.93475;
+	arPM[DB_MVAC1].p_Real_PowerTotal := 414.448852539063;
+	arPM[DB_MVAC2].p_Real_PowerTotal := 222.387817382813;
+	arPM[DB_OFF2].p_Real_PowerTotal := 69;
+	arPM[LP_EL1].p_Real_PowerTotal := 1.16747641563416;
+	arPM[LP_EL2].p_Real_PowerTotal := 0.64;
+	arPM[DB_OFF1].p_Real_PowerTotal := 33.5;
+	arPM[DB_KIT].p_Real_PowerTotal := 55.04;
+	arPM[LP_WH2].p_Real_PowerTotal := 40.1052703857422;
+	arPM[LP_WH1].p_Real_PowerTotal := 14.6377182006836;
+	arPM[CH4].p_Real_PowerTotal := 0.31449943780899;
+	arPM[CH5].p_Real_PowerTotal := 41.1178283691406;
+	arPM[CH6].p_Real_PowerTotal := 64.0811004638672;
+	arPM[LV04].p_Real_PowerTotal := 292.748;
+	arPM[DB_PR2].p_Real_PowerTotal := 351.2;
+	arPM[DB11].p_Real_PowerTotal := 16.96;
+	arPM[DB12].p_Real_PowerTotal := 29.7;
+	arPM[DB13].p_Real_PowerTotal := 43.84;
+	arPM[DB14].p_Real_PowerTotal := 73.28;
+	arPM[DB11_1].p_Real_PowerTotal := 0.0475543439388275;
+	arPM[DB12_1].p_Real_PowerTotal := 9.4025993347168;
+	arPM[DB13_1].p_Real_PowerTotal := 11.6781568527222;
+	arPM[DB14_1].p_Real_PowerTotal := 79.4574737548828;
+	arPM[DB15].p_Real_PowerTotal := 82.24;
+	arPM[DB15_1].p_Real_PowerTotal := 15.1322813034058;
+	arPM[LP_PR5A].p_Real_PowerTotal := 1.4235577583313;
+	arPM[LP_PR5B].p_Real_PowerTotal := 5.79523944854736;
+	arPM[LP_PR6A].p_Real_PowerTotal := 0.276815831661224;
+	arPM[LP_PR6B].p_Real_PowerTotal := 0.194700807332993;
+	arPM[LV01].p_Real_PowerTotal := 923.415375;
+	arPM[DB_PR1_1].p_Real_PowerTotal := 994.784118652344;
+	arPM[DB1].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB2].p_Real_PowerTotal := 56.96;
+	arPM[DB3].p_Real_PowerTotal := 82.56;
+	arPM[DB4].p_Real_PowerTotal := 73.4;
+	arPM[DB1_1].p_Real_PowerTotal := 0;
+	arPM[DB2_1].p_Real_PowerTotal := -1.5E+40;
+	arPM[DB3_1].p_Real_PowerTotal := 24.2024536132813;
+	arPM[DB4_1].p_Real_PowerTotal := 38.3368835449219;
+	arPM[DB5].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB6].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB7].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB_MR].p_Real_PowerTotal := 2.46;
+	arPM[DB5_1].p_Real_PowerTotal := 0;
+	arPM[DB6_1].p_Real_PowerTotal := 0;
+	arPM[DB7_1].p_Real_PowerTotal := 0;
+	arPM[LV02].p_Real_PowerTotal := 1189.95925;
+	arPM[DB_PR1_2].p_Real_PowerTotal := 419.044616699219;
+	arPM[DB_AIRCOMP].p_Real_PowerTotal := 555.449096679688;
+	arPM[DB_AHU].p_Real_PowerTotal := 112.56;
+	arPM[DB8].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB9].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB10].p_Real_PowerTotal := -88888888.4444;
+	arPM[DB8_1].p_Real_PowerTotal := 0;
+	arPM[DB9_1].p_Real_PowerTotal := 0;
+	arPM[DB10_1].p_Real_PowerTotal := 0;
+	arPM[A1].p_Real_PowerTotal := 172.652557373047;
+	arPM[A2].p_Real_PowerTotal := 0;
+	arPM[A3].p_Real_PowerTotal := 94.6016159057617;
+	arPM[A4].p_Real_PowerTotal := 174.430236816406;
+	arPM[A5].p_Real_PowerTotal := 82.7287521362305;
+	arPM[LP_PR1A].p_Real_PowerTotal := 0;
+	arPM[LP_PR1B].p_Real_PowerTotal := 0;
+	arPM[LP_PR2A].p_Real_PowerTotal := 0;
+	arPM[LP_PR2B].p_Real_PowerTotal := 0;
+	arPM[LP_PR3A].p_Real_PowerTotal := 0;
+	arPM[DB_WH].p_Real_PowerTotal := 12.12;
+	arPM[LP_PR3B].p_Real_PowerTotal := 0;
+	arPM[LP_PR4A ].p_Real_PowerTotal := 5.65197658538818;
+	arPM[LP_PR4B].p_Real_PowerTotal := 5.59657144546509;
+	arPM[LP_BM].p_Real_PowerTotal := 2.232;
+	arPM[DB_BM].p_Real_PowerTotal := 7.64;
+	arPM[LV03].p_Real_PowerTotal := 841.93475;
+	arPM[DB_MVAC1].p_Real_PowerTotal := 414.448852539063;
+	arPM[DB_MVAC2].p_Real_PowerTotal := 222.387817382813;
+	arPM[DB_OFF2].p_Real_PowerTotal := 69;
+	arPM[LP_EL1].p_Real_PowerTotal := 1.16747641563416;
+	arPM[LP_EL2].p_Real_PowerTotal := 0.64;
+	arPM[DB_OFF1].p_Real_PowerTotal := 33.5;
+	arPM[DB_KIT].p_Real_PowerTotal := 55.04;
+	arPM[LP_WH2].p_Real_PowerTotal := 40.1052703857422;
+	arPM[LP_WH1].p_Real_PowerTotal := 14.6377182006836;
+	arPM[CH4].p_Real_PowerTotal := 0.31449943780899;
+	arPM[CH5].p_Real_PowerTotal := 41.1178283691406;
+	arPM[CH6].p_Real_PowerTotal := 64.0811004638672;
+	arPM[LV04].p_Real_PowerTotal := 292.748;
+	arPM[DB_PR2].p_Real_PowerTotal := 351.2;
+	arPM[DB11].p_Real_PowerTotal := 16.96;
+	arPM[DB12].p_Real_PowerTotal := 29.7;
+	arPM[DB13].p_Real_PowerTotal := 43.84;
+	arPM[DB14].p_Real_PowerTotal := 73.28;
+	arPM[DB11_1].p_Real_PowerTotal := 0.0475543439388275;
+	arPM[DB12_1].p_Real_PowerTotal := 9.4025993347168;
+	arPM[DB13_1].p_Real_PowerTotal := 11.6781568527222;
+	arPM[DB14_1].p_Real_PowerTotal := 79.4574737548828;
+	arPM[DB15].p_Real_PowerTotal := 82.24;
+	arPM[DB15_1].p_Real_PowerTotal := 15.1322813034058;
+	arPM[LP_PR5A].p_Real_PowerTotal := 1.4235577583313;
+	arPM[LP_PR5B].p_Real_PowerTotal := 5.79523944854736;
+	arPM[LP_PR6A].p_Real_PowerTotal := 0.276815831661224;
+	arPM[LP_PR6B].p_Real_PowerTotal := 0.194700807332993;
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="PgrTest">
+      <LineId Id="146" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="172" Count="0" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="699" Count="0" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="700" Count="0" />
+      <LineId Id="627" Count="71" />
+      <LineId Id="626" Count="0" />
+      <LineId Id="625" Count="0" />
+      <LineId Id="410" Count="0" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="888" Count="0" />
+      <LineId Id="706" Count="0" />
+    </LineIds>
+    <LineIds Name="PgrTest.FirstCycle">
+      <LineId Id="1334" Count="0" />
+      <LineId Id="1338" Count="2" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="78" Count="71" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="150" Count="0" />
+      <LineId Id="156" Count="71" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="230" Count="72" />
+      <LineId Id="304" Count="70" />
+      <LineId Id="303" Count="0" />
+      <LineId Id="375" Count="0" />
+      <LineId Id="378" Count="70" />
+      <LineId Id="377" Count="0" />
+      <LineId Id="449" Count="0" />
+      <LineId Id="524" Count="73" />
+      <LineId Id="599" Count="72" />
+      <LineId Id="673" Count="71" />
+      <LineId Id="672" Count="0" />
+      <LineId Id="1492" Count="71" />
+      <LineId Id="1565" Count="0" />
+      <LineId Id="1564" Count="0" />
+      <LineId Id="1567" Count="71" />
+      <LineId Id="1566" Count="0" />
+      <LineId Id="962" Count="0" />
+      <LineId Id="889" Count="0" />
+      <LineId Id="1262" Count="71" />
+      <LineId Id="1261" Count="0" />
+      <LineId Id="817" Count="0" />
+      <LineId Id="966" Count="71" />
+      <LineId Id="890" Count="0" />
+      <LineId Id="1039" Count="72" />
+      <LineId Id="1113" Count="71" />
+      <LineId Id="1112" Count="0" />
+      <LineId Id="1186" Count="71" />
+      <LineId Id="1259" Count="0" />
+      <LineId Id="1342" Count="143" />
+      <LineId Id="1341" Count="0" />
+      <LineId Id="77" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

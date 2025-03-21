@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FgenerateRandom" Id="{f342d321-aaf6-4252-9c7b-055366d9aa56}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION FgenerateRandom : Lreal // := rawValue + rawValue*percent* random
+VAR_INPUT
+	percent : LREAL ;// percent of vabration random +percent
+	rawValue : LREAL;
+	ValueDrandGenerate : LREAL;
+END_VAR
+VAR_OUTPUT
+	
+END_VAR
+VAR
+	
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FgenerateRandom := rawValue + rawValue * percent * ValueDrandGenerate; ]]></ST>
+    </Implementation>
+    <LineIds Name="FgenerateRandom">
+      <LineId Id="16" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="IsGoodData" Id="{980b0dff-4284-40d8-a89a-5ec6270dba4e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION IsGoodData : BOOL// check into load data not nan and too big or too low
+VAR_INPUT
+	dataLr : LREAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF LrealIsNaN( dataLr ) THEN
+	IsGoodData := FALSE;
+ELSIF dataLr > pmDev.InvalidValueEnergyIntoload OR dataLr <  0.0001 THEN
+	IsGoodData := FALSE;
+ELSE
+	IsGoodData := True;
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="IsGoodData">
+      <LineId Id="7" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="13" Count="3" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="fb_CalCulateAccumulation_Test" Id="{1efb4bea-9641-4821-84f7-351ca5d4cc7a}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'call_after_init'}
+FUNCTION_BLOCK fb_CalCulateAccumulation_Test EXTENDS TcUnit.FB_TestSuite IMPLEMENTS TcUnit.I_TestResults
+
+VAR
+	fbCalEnergy : FB_CalCulateAccumulation;
+	CurrentTime : TIMESTRUCT;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbCalEnergy( lrAccumulator := pmDev.DB06_02_5500.Basic.RealEnergy_IntoLoad,
+				CurrentTime := CurrentTime) ;// lv04]]></ST>
+    </Implementation>
+    <Method Name="FB_init" Id="{47b08a03-9ccf-4c17-8eab-477843e639b4}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+    bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+    bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="fb_CalCulateAccumulation_Test">
+      <LineId Id="12" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="fb_CalCulateAccumulation_Test.FB_init">
+      <LineId Id="11" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

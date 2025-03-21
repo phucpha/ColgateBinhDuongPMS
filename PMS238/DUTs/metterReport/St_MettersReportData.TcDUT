@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="St_MettersReportData" Id="{bf2d380d-5612-4ce2-bdd7-718336388561}">
+    <Declaration><![CDATA[TYPE St_MettersReportData : // contain all data of metter in one day if any issue relevant to electrical, It still remain. if they contain data , set bHaveData to True, if no, set to Falses
+STRUCT
+	bHaveData : BOOL; 
+	InforDate : TIMESTRUCT;
+	sInforDate : STRING;
+	sInforDateAveva	: STRING;
+	//LV01_TRANG1
+	LV01 : LREAL; 
+	DB_PR1_1 : LREAL; 
+	DB1 : LREAL;
+	DB2 : LREAL;
+	DB3 : LREAL;
+	DB4 : LREAL;
+	DB1_2 : LREAL;
+	DB1_1 : LREAL;
+	DB2_2 : LREAL;
+	DB2_1 : LREAL;
+	DB3_2 : LREAL;
+	DB3_1 : LREAL;
+	DB4_2 : LREAL;
+	DB4_1 : LREAL;
+	// LV01_TRANG2
+	DB5 : LREAL; 
+	DB6 : LREAL;
+	DB7 : LREAL;
+	DB_MR : LREAL;
+	DB5_2 : LREAL;
+	DB5_1 : LREAL;
+	DB6_2 : LREAL;
+	DB6_1 : LREAL;
+	DB7_2 : LREAL;
+	DB7_1 : LREAL;
+	// lv02 TRANG1
+	LV02 : LREAL;
+	DB_PR1_2 : LREAL;
+	DB_AIRCOMP : LREAL;
+	DB_AHU : LREAL;
+	DB8 : LREAL;
+	DB9 : LREAL;
+	DB10 : LREAL;
+	DB8_2 : LREAL;
+	DB8_1 : LREAL; 
+	DB9_2 : LREAL;
+	DB9_1 : LREAL;
+	DB10_2 : LREAL;
+	DB10_1 : LREAL;
+	// lv02 TRANG 2
+
+	A1 : LREAL;
+	A2 : LREAL;
+	A3 : LREAL;
+	A4 : LREAL;
+	A5 : LREAL;
+	LP_PR1A : LREAL;
+	LP_PR1B : LREAL;
+	LP_PR2A : LREAL;
+	LP_PR2B : LREAL; 
+	LP_PR3A : LREAL;
+	// LV 02 TRANG 3
+
+	DP_WH : LREAL;
+	LP_PR3B : LREAL;
+	LP_PR4A : LREAL;
+	LP_PR4B : LREAL;
+	LP_BM : LREAL;
+	DB_BM : LREAL;
+	// lv 03 TRANG 1
+	LV03 : LREAL;
+	DB_MVAC1 : LREAL;
+	DB_MVAC2 : LREAL;
+	DB_OFF2 : LREAL;
+	LP_EL1 : LREAL;
+	LP_EL2 : LREAL;
+	DB_OFF1 : LREAL;
+	DB_KIT : LREAL;
+	LP_WH2 : LREAL;
+	LP_WH1 : LREAL;
+	CH4 : LREAL;
+	CH5 : LREAL;
+	CH6 : LREAL;
+	// LV 04 
+	LV04 : LREAL;
+	DB_PR2 : LREAL;
+	DB11 : LREAL;
+	DB12 : LREAL;
+	DB13 : LREAL;
+	DB14 : LREAL;
+	DB11_2 : LREAL;
+	DB11_1 : LREAL;
+	DB12_2 : LREAL;
+	DB12_1 : LREAL;
+	DB13_2 : LREAL;
+	DB13_1 : LREAL;
+	DB14_2 : LREAL;
+	DB14_1 : LREAL;
+	// LV04 TRANG 2
+
+	
+	DB15 : LREAL;
+	DB15_2 : LREAL;
+	DB15_1 : LREAL;
+	LP_PR5A : LREAL;
+	LP_PR5B : LREAL;
+	LP_PR6A : LREAL;
+	LP_PR6B : LREAL;
+	
+	
+
+
+	////Power Virtual Meter	// new require 19/07	
+	MaySayKhi			: 	LREAL;
+	OilCoolingPump		: 	LREAL;
+	LightNVO			: 	LREAL;
+	CP_WHEF1            : 	LREAL;
+	CP_WHEF2            :	LREAL;
+	DB_FIC              :	LREAL;
+	
+	// date 2508
+	//Machine
+		PKG_HoongA			: 	LREAL;
+		PKG_Other			: 	LREAL;
+		TE_Tufting			: 	LREAL;
+		TE_End				:	LREAL;
+		IM_VIM				: 	LREAL;
+		IM_HIM				: 	LREAL;
+		MIXING				: 	LREAL;
+		LIGHTING_IM			: 	LREAL;
+		LIGHTING_PKG_TE		: 	LREAL;
+		AIRCOMP1       : LREAL;
+		AIRCOMP2       : LREAL;
+		AIRCOMP3       : LREAL;
+		AIRCOMP4       : LREAL;
+		AIRCOMP5       : LREAL;
+		BLISTER_FORMING       : LREAL;
+		LIGHTING_BLISTER       : LREAL;
+		CHILLER4       : LREAL;
+		CHILLER5       : LREAL;
+		CHILLER6       : LREAL;
+		OIL_COOLING       : LREAL;
+		TE_AFT       : LREAL;
+		TE_HEPTA       : LREAL;
+		TE_FREXILINE       : LREAL;
+		OFFICE_GROUND       : LREAL;
+		OFFICE_1       : LREAL;
+		CANTEEN       : LREAL;
+		SECURITY_FONT       : LREAL;
+		SECURITY_BACK       : LREAL;
+		LIGHTING_RM       : LREAL;
+		LIGHTING_FG       : LREAL;
+	//Area
+		PKG       : LREAL;
+		TE       : LREAL;
+		IM       : LREAL;
+		AreaMixing       : LREAL;
+		Lighting       : LREAL;
+		Aircomp       : LREAL;
+		HVACAHU       : LREAL;
+		GROUND       : LREAL;
+		Layer1       : LREAL;
+		HVAC       : LREAL;
+		Kit        : LREAL;
+		Chiller       : LREAL;
+		Other       : LREAL;
+
+	
+	
+	
+	
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ReadPM5350" Id="{ba443878-5f2f-4215-8d9d-4bc7b40e7c5a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ReadPM5350 EXTENDS ReadPm5350
+
+VAR_OUTPUT
+END_VAR
+VAR PERSISTENT
+	validEnvergyIntoLoad : LREAL;
+END_VAR
+(*VAR_IN_OUT
+	PM		:	ST_PowerMeter;
+END_VAR*)
+VAR
+	bOtherDataGood : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[SUPER^(PM:= THIS^.PM,
+		bExecute := bExecute);
+
+bOtherdataGood := 	IsGoodData( pm.Basic.Voltage_LLAvg )
+				AND IsGoodData( pm.Basic.Current_Avg)
+				AND IsGoodData(	pm.Basic.Frequency)
+				AND IsGoodData( pm.Basic.Voltage_AN)
+				AND IsGoodData(	pm.Basic.Voltage_AB)
+				AND IsGoodData( pm.Basic.Voltage_BN)
+				AND IsGoodData(	pm.Basic.Voltage_BC)
+				AND IsGoodData( pm.Basic.Voltage_CN)
+				AND IsGoodData(	pm.Basic.Voltage_CA);
+				
+				
+IF IsGoodData (pm.Basic.RealEnergy_IntoLoad ) AND bOtherDataGood THEN
+	;// pm.Basic.RealEnergy_IntoLoad still it
+	validEnvergyIntoLoad := pm.Basic.RealEnergy_IntoLoad;
+ELSE
+	pm.Basic.RealEnergy_IntoLoad := validEnvergyIntoLoad;
+END_IF
+
+//round value
+	(*PM.Basic.RealEnergy_IntoLoad := F_RoundLrealEx(	lrIn 	:= PM.Basic.RealEnergy_IntoLoad,
+										iPrecision 	:= 0);*)
+												
+	PM.Basic.PowerFactor := F_RoundLrealEx(	lrIn 	:= PM.Basic.PowerFactor,
+								iPrecision 	:= 2);]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ReadPM5350">
+      <LineId Id="25" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="38" Count="2" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="62" Count="4" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="79" Count="3" />
+      <LineId Id="57" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

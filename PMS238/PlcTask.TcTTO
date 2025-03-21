@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Task Name="PlcTask" Id="{b3e02486-8804-46b5-b6aa-81cb60a38f10}">
+    <!--CycleTime in micro seconds.-->
+    <CycleTime>10000</CycleTime>
+    <Priority>20</Priority>
+    <PouCall>
+      <Name>MAIN</Name>
+    </PouCall>
+    <PouCall>
+      <Name>PRG_MachineLogger</Name>
+    </PouCall>
+    <PouCall>
+      <Name>PmReport2</Name>
+    </PouCall>
+    <TaskFBGuid>{b0fa1393-c500-445f-b96a-cf72bc5935f3}</TaskFBGuid>
+    <Fb_init>{23e78cd4-405c-4551-9b3b-55f461bbdc03}</Fb_init>
+    <Fb_exit>{aa98b63b-7d26-4955-bad0-cbf736abb567}</Fb_exit>
+    <CycleUpdate>{6ffbeb5f-581e-48b5-bdd3-c61575957c91}</CycleUpdate>
+    <PostCycleUpdate>{f998ab3b-525e-4623-8ac6-8c08dd98123c}</PostCycleUpdate>
+  </Task>
+</TcPlcObject>

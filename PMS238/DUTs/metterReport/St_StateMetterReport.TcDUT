@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="St_StateMetterReport" Id="{6af51771-0a27-4b06-88bb-ae383bb8db4a}">
+    <Declaration><![CDATA[TYPE St_StateMetterReport :
+STRUCT
+	bRequest : BOOL;// True : request to Aveva, Aveva success report will assign bRequest to false
+	nState : UINT;
+	tCheckStackData : TON;
+	bHaveAnyDataInStack : BOOL;
+	iloopDate : UDINT;// index loop date check 
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

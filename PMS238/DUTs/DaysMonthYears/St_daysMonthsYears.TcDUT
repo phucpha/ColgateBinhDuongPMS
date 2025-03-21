@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="St_daysMonthsYears" Id="{c5af67a5-9a6c-4de5-b9c8-db15e6cf72a8}">
+    <Declaration><![CDATA[TYPE St_daysMonthsYears :
+STRUCT
+	data : ARRAY[2023..2050] OF ARRAY[0..12] OF ARRAY[0..31] OF LREAL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

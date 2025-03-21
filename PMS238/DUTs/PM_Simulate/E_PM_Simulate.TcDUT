@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_PM_Simulate" Id="{4c6ddd1a-e045-4db6-9ebd-abb521e6edac}">
+    <Declaration><![CDATA[
+{attribute 'strict'}
+TYPE E_PM_Simulate :
+(
+	
+	PM_SIMU_WAIT := 0,
+	PM_SIMU_UPDATE := 10,
+	PM_SIMU_READ_FAULT := 20
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
