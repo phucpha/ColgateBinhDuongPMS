@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="PmReport2" Id="{f87281e8-a82d-4af1-985b-fe2209163fd4}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PmReport2
 VAR
@@ -646,7 +646,11 @@ END_VAR
 		FIFOEnergyTimestruct_1D.MR_AddValue(  Value := arCalculateEnergy_1H[pmDev.numAllMeter-1].previousTimestampOut);
 		FOR iLoop := 0 TO pmDev.numAllMeter-1 DO
 			// round number before go to the FIFO
-			arFIFOEnergy_1D[iLoop].MR_AddValue( Value := F_RoundLrealEx( lrIn := arCalculateEnergy_1D[iLoop].accumulatedValueOut ,iPrecision := 0));
+			arFIFOEnergy_1D[iLoop].MR_AddValue(
+				Value := F_RoundLrealEx( 
+					lrIn := arCalculateEnergy_1D[iLoop].accumulatedValueOut,
+					iPrecision := 0)
+			);
 			// Ack The Calculate
 			arCalculateEnergy_1D[iloop].MR_Acknowledge();
 		END_FOR
@@ -782,6 +786,7 @@ END_CASE
       <LineId Id="945" Count="0" />
       <LineId Id="935" Count="1" />
       <LineId Id="635" Count="0" />
+      <LineId Id="1060" Count="3" />
       <LineId Id="940" Count="0" />
       <LineId Id="544" Count="0" />
       <LineId Id="630" Count="1" />
