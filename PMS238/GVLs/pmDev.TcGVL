@@ -117,7 +117,7 @@ VAR_GLOBAL
 	bAlarmDifferentTime2System : BOOL;
 END_VAR
 VAR_GLOBAL CONSTANT
-
+	TIMESTRUCT_DEFAULT : TIMESTRUCT;
 	InvalidValueEnergyIntoload   : LREAL := 1E12; // if Energy Intoload bigger this parameter or lower than (-NanEnergyIntoload) , EnergyIntoload can't be use
 	numAllMeter	 :UINT := 87;
 	SecondDifferentAllow : UDINT := 300;

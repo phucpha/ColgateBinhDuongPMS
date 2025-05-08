@@ -70,6 +70,9 @@
     <Compile Include="Function\FgenerateRandom.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Function\FUN_Compare_Timestructs.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Function\F_RoundLrealEx.TcPOU">
       <SubType>Code</SubType>
     </Compile>

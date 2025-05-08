@@ -19,10 +19,20 @@ VAR CONSTANT
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[fb_timeCrossCheck(	TimeStruct_Sys1 := pmDev.AvevaTimeStruct,
+      <ST><![CDATA[IF FUN_Compare_Timestructs(
+	ts1 := pmDev.AvevaTimeStruct, 
+	ts2 := pmDev.TIMESTRUCT_DEFAULT
+	) = 0 // equal
+THEN
+	 pmDev.bAlarmDifferentTime2System := FALSE;
+	 
+ELSE 
+	fb_timeCrossCheck(	TimeStruct_Sys1 := pmDev.AvevaTimeStruct,
 					TimeStruct_Sys2 := pmDev.NT_GetTime.TIMESTR,
 					secondDifferentAllow := pmdev.SecondDifferentAllow,
 					bErrorTimeTwoSystem => pmDev.bAlarmDifferentTime2System);
+END_IF
+
 
 
 pmdev.NT_GetTime(START := FALSE);
@@ -177,7 +187,13 @@ END_VAR]]></Declaration>
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
-      <LineId Id="20105" Count="8" />
+      <LineId Id="20263" Count="0" />
+      <LineId Id="20279" Count="5" />
+      <LineId Id="20278" Count="0" />
+      <LineId Id="20267" Count="2" />
+      <LineId Id="20266" Count="0" />
+      <LineId Id="20264" Count="0" />
+      <LineId Id="20108" Count="5" />
       <LineId Id="20195" Count="0" />
       <LineId Id="20114" Count="6" />
       <LineId Id="20205" Count="0" />
