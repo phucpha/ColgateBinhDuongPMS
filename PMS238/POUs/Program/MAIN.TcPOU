@@ -33,11 +33,11 @@ ELSE
 					bErrorTimeTwoSystem => pmDev.bAlarmDifferentTime2System);
 END_IF
 
-
-
 pmdev.NT_GetTime(START := FALSE);
-pmdev.NT_GetTime(START := TRUE,
-					TIMESTR => GVL.fbMachineTime.systemTime); 
+pmdev.NT_GetTime(
+	START := TRUE,
+	TIMESTR => GVL.fbMachineTime.systemTime
+); 
 					
 IP231();
 IP232();
@@ -193,7 +193,11 @@ END_VAR]]></Declaration>
       <LineId Id="20267" Count="2" />
       <LineId Id="20266" Count="0" />
       <LineId Id="20264" Count="0" />
-      <LineId Id="20108" Count="5" />
+      <LineId Id="20285" Count="0" />
+      <LineId Id="20111" Count="1" />
+      <LineId Id="20286" Count="0" />
+      <LineId Id="20113" Count="0" />
+      <LineId Id="20287" Count="0" />
       <LineId Id="20195" Count="0" />
       <LineId Id="20114" Count="6" />
       <LineId Id="20205" Count="0" />
