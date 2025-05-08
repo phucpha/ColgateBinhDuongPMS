@@ -172,9 +172,6 @@
     <Compile Include="POUs\Program\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\Program\MeterReport.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\Program\PmReport2.TcPOU">
       <SubType>Code</SubType>
     </Compile>

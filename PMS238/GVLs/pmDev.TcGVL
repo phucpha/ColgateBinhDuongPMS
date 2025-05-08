@@ -111,34 +111,13 @@ VAR_GLOBAL
 	PowerMeter_Lv02		: ST_PowerMeter;
 	PowerMeter_Lv03		: ST_PowerMeter;
 	PowerMeter_Lv04		: ST_PowerMeter;
-	
 
-	
-
-	MetersEnergyHour	: st_PowersKw;// aveva
-	bAvevaDisableAllTrendDataSaving : BOOL := TRUE;
-	TonWaitReadMeter : TON;
-	
 	NT_GetTime : NT_GetTime;
 	AvevaTimeStruct : TIMESTRUCT;
 	bAlarmDifferentTime2System : BOOL;
 END_VAR
-
-VAR_GLOBAL PERSISTENT 
-	IntoLoadHourBefor : st_PowersKw;
-	nDaysMettersReportData : ARRAY [0..pmDev.MaxStackDaysPersistance-1] OF St_MettersReportData;
-	stateReport : St_StateMetterReport;
-	// stReportEnergy use fore report to aveva 
-	stReportEnergy : St_MettersReportData;
-	// catch the EnergyIntoLoadAt0hToday or is value record at power ON fist time in today
-	stEnergyIntoLoadAt0hToday : St_MettersReportData;
-END_VAR
-
 VAR_GLOBAL CONSTANT
-	// so ngay luu du gia tri dien
-	MaxStackDaysPersistance : UINT := 20 ;
-	startYear : UINT := 2024;
-	endYear : UINT := 2030;
+
 	InvalidValueEnergyIntoload   : LREAL := 1E12; // if Energy Intoload bigger this parameter or lower than (-NanEnergyIntoload) , EnergyIntoload can't be use
 	numAllMeter	 :UINT := 87;
 	SecondDifferentAllow : UDINT := 300;
@@ -147,80 +126,6 @@ END_VAR
 VAR_GLOBAL
 	bTrigReadCOmmision : BOOL;
 END_VAR
-
-//aveva control view
-VAR_GLOBAL
-	ID_Screen: INT;
-	Value01: LREAL;
-	Value02: LREAL;
-	Value03: LREAL;
-	Value04: LREAL;
-	Value05: LREAL;
-	Value06: LREAL;
-	Value07: LREAL;
-	Value08: LREAL;
-	Value09: LREAL;
-	Value10: LREAL;
-	Value11: LREAL;
-	Value12: LREAL;
-	Value13: LREAL;
-	Value14: LREAL;
-	Value15: LREAL;
-	Value16: LREAL;
-	Value17: LREAL;
-	Value18: LREAL;
-	Value19: LREAL;
-	Value20: LREAL;
-	Value21: LREAL;
-	Value22: LREAL;
-	Value23: LREAL;
-	Value24: LREAL;
-	Value25: LREAL;
-	Value26: LREAL;
-	Value27: LREAL;
-	Value28: LREAL;
-	Value29: LREAL;
-	Value30: LREAL;
-	Value31: LREAL;
-	Value32: LREAL;
-	Value33: LREAL;
-	Value34: LREAL;
-	Value35: LREAL;
-	Value36: LREAL;
-	Value37: LREAL;
-	Value38: LREAL;
-	Value39: LREAL;
-	Value40: LREAL;
-	Value41: LREAL;
-	Value42: LREAL;
-	Value43: LREAL;
-	Value44: LREAL;
-	Value45: LREAL;
-	Value46: LREAL;
-	Value47: LREAL;
-	Value48: LREAL;
-	Value49: LREAL;
-	Value50: LREAL;
-	Value51: LREAL;
-	Value52: LREAL;
-	Value53: LREAL;
-	Value54: LREAL;
-	Value55: LREAL;
-	Value56: LREAL;
-	Value57: LREAL;
-	Value58: LREAL;
-	Value59: LREAL;
-	Value60: LREAL;
-	Value61: LREAL;
-	Value62: LREAL;
-	Value63: LREAL;
-	Value64: LREAL;
-	Value65: LREAL;
-	Value66: LREAL;
-	Value67: LREAL;
-	Value68: LREAL;
-	Value69: LREAL;
-	Value70: LREAL;
-END_VAR]]></Declaration>
+]]></Declaration>
   </GVL>
 </TcPlcObject>

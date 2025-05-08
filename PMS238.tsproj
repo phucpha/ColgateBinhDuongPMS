@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.62">
-	<Project ProjectGUID="{40003E5E-9989-4261-B2D7-713109A550B1}" TargetNetId="192.168.1.20.1.240" ShowHideConfigurations="#x3c6">
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56">
+	<Project ProjectGUID="{40003E5E-9989-4261-B2D7-713109A550B1}" ShowHideConfigurations="#x3c6">
 		<System>
 			<Tasks>
 				<Task Id="3" Priority="20" CycleTime="100000" AmsPort="350" Watchdog="50" DisableFpExceptions="true" AdtTasks="true">
@@ -13,7 +13,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{8DEE6238-5646-4BB7-B85C-1837E0364044}" Name="PMS238" PrjFilePath="PMS238\PMS238.plcproj" TmcFilePath="PMS238\PMS238.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PMS238\PMS238.tmc" TmcHash="{C3C85E38-B082-32EB-18CB-51286A95A886}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PMS238\PMS238.tmc" TmcHash="{D72121F9-D24F-4A11-7000-6DC33F0C3276}">
 					<Name>PMS238 Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Contexts>

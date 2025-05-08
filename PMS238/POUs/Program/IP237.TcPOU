@@ -5,12 +5,7 @@
 VAR
 	
 	timer				: TON;
-	bDoReading			: BOOL;
-	
-	bOnInit				: BOOL	:= TRUE;
-	timerInit			: TON;
-	
-	nState				: INT;
+	nState				: INT := STATE_INIT;
 	
 	fbInit237_01_5500			: FB_InitPM;
 	fbInit237_02_5500			: FB_InitPM;
@@ -65,6 +60,7 @@ END_VAR
 
 VAR CONSTANT
 	STATE_INIT			:	INT		:= 0;
+	STATE_WAIT_CMD		: 	INT		:= 5;
 	STATE_READ1			:	INT		:= 10;
 	STATE_READ2			:	INT		:= 20;
 	STATE_READ3			:	INT		:= 30;
@@ -84,255 +80,269 @@ VAR CONSTANT
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[timerInit(In:=TRUE, PT:=T#3S);
-IF timerInit.Q THEN
-	timerInit(In:=FALSE);
-		bOnInit	:= FALSE;
-	END_IF
-
-IF bOnInit THEN
-	fbInit237_01_5500(	sIpAddress	:= '10.91.37.227',
-						nPort		:= 502,
-						nUnitID		:= 255,
-						PM			:= pmDev.DB07_01_5500);
-	fbInit237_02_5500(	sIpAddress	:= '10.91.37.228',
-						nPort		:= 502,
-						nUnitID		:= 255,
-						PM			:= pmDev.DB07_02_5500);
-	fbInit237_03_5500(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 3,
-						PM			:= pmDev.DB07_03_5500);
-	fbInit237_04_5500(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 4,
-						PM			:= pmDev.DB07_04_5500);
-	fbInit237_05_5500(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 5,
-						PM			:= pmDev.DB07_05_5500);
-	// updata by sun///////////////////////////////////////////////
-	
-	fbInit237_06_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 6,
-						PM			:= pmDev.DB07_06_5350);
-						
-	fbInit237_07_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 7,
-						PM			:= pmDev.DB07_07_5350);
-						
-	fbInit237_08_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 8,
-						PM			:= pmDev.DB07_08_5350);
-						
-	fbInit237_09_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 9,
-						PM			:= pmDev.DB07_09_5350);
-						
-	fbInit237_10_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 10,
-						PM			:= pmDev.DB07_10_5350);
-						
-	fbInit237_11_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 11,
-						PM			:= pmDev.DB07_11_5350);
-						
-	fbInit237_12_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 12,
-						PM			:= pmDev.DB07_12_5350);
-						
-	fbInit237_13_5350(	sIpAddress	:= '10.91.37.237',
-						nPort		:= 502,
-						nUnitID		:= 13,
-						PM			:= pmDev.DB07_13_5350);
-						
-END_IF
-
-IF NOT bOnInit THEN
-	timer(In:=TRUE, PT:=T#5M);
-	IF timer.Q OR pmdev.bTrigReadCOmmision THEN
-		timer(In:=FALSE);
-		nState	:= STATE_READ1;
-	END_IF
-END_IF
-
-CASE nState OF
-STATE_INIT:
-	nCount	:= nCount + 1;
-STATE_READ1:
-	fbRead237_01_5500(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_01_5500);
-	IF NOT fbRead237_01_5500.Q THEN
-		nState	:= STATE_READ2;
+      <ST><![CDATA[CASE nState OF
+	STATE_INIT:
+		fbInit237_01_5500(	sIpAddress	:= '10.91.37.227',
+							nPort		:= 502,
+							nUnitID		:= 255,
+							PM			:= pmDev.DB07_01_5500);
+		fbInit237_02_5500(	sIpAddress	:= '10.91.37.228',
+							nPort		:= 502,
+							nUnitID		:= 255,
+							PM			:= pmDev.DB07_02_5500);
+		fbInit237_03_5500(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 3,
+							PM			:= pmDev.DB07_03_5500);
+		fbInit237_04_5500(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 4,
+							PM			:= pmDev.DB07_04_5500);
+		fbInit237_05_5500(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 5,
+							PM			:= pmDev.DB07_05_5500);
+		// updata by sun///////////////////////////////////////////////
+		
+		fbInit237_06_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 6,
+							PM			:= pmDev.DB07_06_5350);
+							
+		fbInit237_07_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 7,
+							PM			:= pmDev.DB07_07_5350);
+							
+		fbInit237_08_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 8,
+							PM			:= pmDev.DB07_08_5350);
+							
+		fbInit237_09_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 9,
+							PM			:= pmDev.DB07_09_5350);
+							
+		fbInit237_10_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 10,
+							PM			:= pmDev.DB07_10_5350);
+							
+		fbInit237_11_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 11,
+							PM			:= pmDev.DB07_11_5350);
+							
+		fbInit237_12_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 12,
+							PM			:= pmDev.DB07_12_5350);
+							
+		fbInit237_13_5350(	sIpAddress	:= '10.91.37.237',
+							nPort		:= 502,
+							nUnitID		:= 13,
+							PM			:= pmDev.DB07_13_5350);
+							
+		timer(In:=TRUE, PT:= TIME_INIT);
+		IF timer.Q THEN
+			timer(In:=FALSE);
+			nState	:= STATE_WAIT_CMD;
+		END_IF
+			
+	STATE_WAIT_CMD:
+			;
+			
+	STATE_READ1:
 		fbRead237_01_5500(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_01_5500);
-	END_IF
-	
-STATE_READ2:
-	fbRead237_02_5500(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_02_5500);
-	IF NOT fbRead237_02_5500.Q THEN
-		nState	:= STATE_READ3;
+		IF NOT fbRead237_01_5500.Q THEN
+			nState	:= STATE_READ2;
+			fbRead237_01_5500(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_01_5500);
+		END_IF
+		
+	STATE_READ2:
 		fbRead237_02_5500(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_02_5500);
-	END_IF	
-
-STATE_READ3:
-
+		IF NOT fbRead237_02_5500.Q THEN
+			nState	:= STATE_READ3;
+			fbRead237_02_5500(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_02_5500);
+		END_IF	
 	
-	fbRead237_03_5500(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_03_5500);
-	IF NOT fbRead237_03_5500.Q THEN
-		nState	:= STATE_READ4;
+	STATE_READ3:
+	
+		
 		fbRead237_03_5500(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_03_5500);
-	END_IF	
+		IF NOT fbRead237_03_5500.Q THEN
+			nState	:= STATE_READ4;
+			fbRead237_03_5500(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_03_5500);
+		END_IF	
+		
+	STATE_READ4:
 	
-STATE_READ4:
-
-	
-	fbRead237_04_5500(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_04_5500);
-	IF NOT fbRead237_04_5500.Q THEN
-		nState	:= STATE_READ5;
+		
 		fbRead237_04_5500(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_04_5500);
-	END_IF
+		IF NOT fbRead237_04_5500.Q THEN
+			nState	:= STATE_READ5;
+			fbRead237_04_5500(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_04_5500);
+		END_IF
+		
+	STATE_READ5:
 	
-STATE_READ5:
-
-
-	fbRead237_05_5500(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_05_5500);
-	IF NOT fbRead237_05_5500.Q THEN
-		nState	:= STATE_READ6;
+	
 		fbRead237_05_5500(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_05_5500);
-	END_IF
-
-	////////////////////////////update by Sun
+		IF NOT fbRead237_05_5500.Q THEN
+			nState	:= STATE_READ6;
+			fbRead237_05_5500(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_05_5500);
+		END_IF
 	
-STATE_READ6:
-
-	fbRead237_06_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_06_5350);
-	IF NOT fbRead237_06_5350.Q THEN
-		nState	:= STATE_READ7;
+		////////////////////////////update by Sun
+		
+	STATE_READ6:
+	
 		fbRead237_06_5350(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_06_5350);
-	END_IF
-
-STATE_READ7:
-
-	fbRead237_07_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_07_5350);
-	IF NOT fbRead237_07_5350.Q THEN
-		nState	:= STATE_READ8;
-		fbRead237_07_5350(
-			bExecute:=FALSE,
-			PM:= pmDev.DB07_07_5350);
-	END_IF
-
-STATE_READ8:
-
-	fbRead237_08_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_08_5350);
-	IF NOT fbRead237_08_5350.Q THEN
-		nState	:= STATE_READ9;
-		fbRead237_08_5350(
-			bExecute:=FALSE,
-			PM:= pmDev.DB07_08_5350);
-	END_IF
-
-STATE_READ9:
-
-	fbRead237_09_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_09_5350);
-	IF NOT fbRead237_09_5350.Q THEN
-		nState	:= STATE_READ10;
-		fbRead237_09_5350(
-			bExecute:=FALSE,
-			PM:= pmDev.DB07_09_5350);
-	END_IF
+		IF NOT fbRead237_06_5350.Q THEN
+			nState	:= STATE_READ7;
+			fbRead237_06_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_06_5350);
+		END_IF
 	
-STATE_READ10:
-
-	fbRead237_10_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_10_5350);
-	IF NOT fbRead237_10_5350.Q THEN
-		nState	:= STATE_READ11;
+	STATE_READ7:
+	
+		fbRead237_07_5350(
+			bExecute:=TRUE,
+			PM:= pmDev.DB07_07_5350);
+		IF NOT fbRead237_07_5350.Q THEN
+			nState	:= STATE_READ8;
+			fbRead237_07_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_07_5350);
+		END_IF
+	
+	STATE_READ8:
+	
+		fbRead237_08_5350(
+			bExecute:=TRUE,
+			PM:= pmDev.DB07_08_5350);
+		IF NOT fbRead237_08_5350.Q THEN
+			nState	:= STATE_READ9;
+			fbRead237_08_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_08_5350);
+		END_IF
+	
+	STATE_READ9:
+	
+		fbRead237_09_5350(
+			bExecute:=TRUE,
+			PM:= pmDev.DB07_09_5350);
+		IF NOT fbRead237_09_5350.Q THEN
+			nState	:= STATE_READ10;
+			fbRead237_09_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_09_5350);
+		END_IF
+		
+	STATE_READ10:
+	
 		fbRead237_10_5350(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_10_5350);
-	END_IF
-
-STATE_READ11:
-
-	fbRead237_11_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_11_5350);
-	IF NOT fbRead237_11_5350.Q THEN
-		nState	:= STATE_READ12;
+		IF NOT fbRead237_10_5350.Q THEN
+			nState	:= STATE_READ11;
+			fbRead237_10_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_10_5350);
+		END_IF
+	
+	STATE_READ11:
+	
 		fbRead237_11_5350(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_11_5350);
-	END_IF
-
-STATE_READ12:
-
-	fbRead237_12_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_12_5350);
-	IF NOT fbRead237_12_5350.Q THEN
-		nState	:= STATE_READ13;
+		IF NOT fbRead237_11_5350.Q THEN
+			nState	:= STATE_READ12;
+			fbRead237_11_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_11_5350);
+		END_IF
+	
+	STATE_READ12:
+	
 		fbRead237_12_5350(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_12_5350);
-	END_IF
-
-STATE_READ13:
-
-	fbRead237_13_5350(
-		bExecute:=TRUE,
-		PM:= pmDev.DB07_13_5350);
-	IF NOT fbRead237_13_5350.Q THEN
-		nState	:= STATE_INIT;
+		IF NOT fbRead237_12_5350.Q THEN
+			nState	:= STATE_READ13;
+			fbRead237_12_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_12_5350);
+		END_IF
+	
+	STATE_READ13:
+	
 		fbRead237_13_5350(
-			bExecute:=FALSE,
+			bExecute:=TRUE,
 			PM:= pmDev.DB07_13_5350);
-	END_IF
-
+		IF NOT fbRead237_13_5350.Q THEN
+			nState	:= STATE_WAIT_CMD;
+			fbRead237_13_5350(
+				bExecute:=FALSE,
+				PM:= pmDev.DB07_13_5350);
+		END_IF
+	
 
 	
 END_CASE
 
 ]]></ST>
     </Implementation>
+    <Property Name="Busy" Id="{6abd9ec0-03cd-4794-9f62-392a343c627e}">
+      <Declaration><![CDATA[PROPERTY Busy : Bool]]></Declaration>
+      <Get Name="Get" Id="{b236e423-d81a-4f42-90f0-9b04694f89f7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Busy := nState <> STATE_WAIT_CMD; ]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Mr_Read" Id="{5c83eeeb-4f9e-4abc-a1cd-ed0ee1db8d68}">
+      <Declaration><![CDATA[METHOD Mr_Read : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF nState = STATE_WAIT_CMD THEN
+	nState := STATE_READ1;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="IP237">
-      <LineId Id="63" Count="26" />
+      <LineId Id="810" Count="1" />
+      <LineId Id="70" Count="19" />
       <LineId Id="541" Count="1" />
       <LineId Id="544" Count="2" />
       <LineId Id="543" Count="0" />
@@ -357,9 +367,9 @@ END_CASE
       <LineId Id="585" Count="0" />
       <LineId Id="576" Count="2" />
       <LineId Id="575" Count="0" />
-      <LineId Id="555" Count="0" />
-      <LineId Id="119" Count="8" />
-      <LineId Id="143" Count="26" />
+      <LineId Id="820" Count="0" />
+      <LineId Id="812" Count="7" />
+      <LineId Id="146" Count="23" />
       <LineId Id="178" Count="0" />
       <LineId Id="317" Count="0" />
       <LineId Id="319" Count="7" />
@@ -394,6 +404,12 @@ END_CASE
       <LineId Id="276" Count="1" />
       <LineId Id="281" Count="0" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="IP237.Busy.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="IP237.Mr_Read">
+      <LineId Id="5" Count="2" />
     </LineIds>
   </POU>
 </TcPlcObject>

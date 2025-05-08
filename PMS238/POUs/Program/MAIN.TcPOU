@@ -3,11 +3,20 @@
   <POU Name="MAIN" Id="{3619e49b-d106-43f4-aab7-1d16843c522e}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-	
-fb_timeCrossCheck	: FB_TimeCrossCheck2System;
+	fb_timeCrossCheck	: FB_TimeCrossCheck2System;
+	eEgxRead	: UINT := WAIT_EGX_FREE;
 END_VAR
 
-
+VAR CONSTANT
+	WAIT_EGX_FREE	: UINT := 0;
+	EGX_231 : UINT := 231;
+	EGX_232 : UINT := 232;
+	EGX_233 : UINT := 233;
+	EGX_234 : UINT := 234;
+	EGX_235 : UINT := 235;
+	EGX_236 : UINT := 236;
+	EGX_237 : UINT := 237;
+END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[fb_timeCrossCheck(	TimeStruct_Sys1 := pmDev.AvevaTimeStruct,
@@ -19,6 +28,7 @@ END_VAR
 pmdev.NT_GetTime(START := FALSE);
 pmdev.NT_GetTime(START := TRUE,
 					TIMESTR => GVL.fbMachineTime.systemTime); 
+					
 IP231();
 IP232();
 IP233();
@@ -26,6 +36,61 @@ IP234();
 IP235();
 IP236();
 IP237();
+CASE eEgxRead OF
+	WAIT_EGX_FREE :
+		IF NOT IP231.Busy
+		AND NOT IP232.Busy
+		AND NOT IP233.Busy
+		AND NOT IP234.Busy
+		AND NOT IP235.Busy
+		AND NOT IP236.Busy
+		AND NOT IP237.Busy
+		THEN
+			eEgxRead := EGX_231;
+		END_IF
+		
+	EGX_231 :
+		IP231.Mr_Read();
+		IF NOT IP231.Busy THEN
+			eEgxRead := EGX_232;
+		END_IF
+		
+	EGX_232 :
+		IP232.Mr_Read();
+		IF NOT IP232.Busy THEN
+			eEgxRead := EGX_233;
+		END_IF
+		
+	EGX_233 :
+		IP233.Mr_Read();
+		IF NOT IP233.Busy THEN
+			eEgxRead := EGX_234;
+		END_IF
+		
+	EGX_234 :
+		IP234.Mr_Read();
+		IF NOT IP234.Busy THEN
+			eEgxRead := EGX_235;
+		END_IF
+		
+	EGX_235 :
+		IP235.Mr_Read();
+		IF NOT IP235.Busy THEN
+			eEgxRead := EGX_236;
+		END_IF
+		
+	EGX_236 :
+		IP236.Mr_Read();
+		IF NOT IP236.Busy THEN
+			eEgxRead := EGX_237;
+		END_IF
+		
+	EGX_237 :
+		IP237.Mr_Read();
+		IF NOT IP237.Busy THEN
+			eEgxRead := WAIT_EGX_FREE;
+		END_IF
+END_CASE
 
 pmdev.bTrigReadCOmmision := FALSE;
 CalculateVirtualMeter(	MeterMain := pmDev.DB05_10_5500 ,
@@ -95,47 +160,6 @@ CalculateVirtualMeter(	MeterMain := pmDev.DB05_10_5500 ,
 	
  ]]></ST>
     </Implementation>
-    <Method Name="AsignOneMeterDetail" Id="{be86f5c1-7789-46bc-bddc-1e511a8f2e6d}">
-      <Declaration><![CDATA[METHOD AsignOneMeterDetail : BOOL
-VAR_INPUT
-	st_meter	: REFERENCE TO ST_PowerMeter;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[	pmDev.Value01 := st_meter.Basic.Frequency;
-	pmDev.Value02 := st_meter.Basic.PowerFactor;
-	pmDev.Value03 := st_meter.Basic.Voltage_LLAvg;
-	pmDev.Value04 := st_meter.Basic.Voltage_LNAvg;
-	pmDev.Value05 := st_meter.Basic.Current_Avg;	
-	pmDev.Value06 := st_meter.Basic.Real_PowerTotal;
-	pmDev.Value07 := st_meter.Basic.Voltage_AB;
-	pmDev.Value08 := st_meter.Basic.Voltage_AN;
-	pmDev.Value09 := st_meter.Basic.Current_A;
-	pmDev.Value10 := st_meter.Basic.Real_PowerA;
-	pmDev.Value11 := st_meter.Basic.Voltage_BC;
-	pmDev.Value12 := st_meter.Basic.Voltage_BN;
-	pmDev.Value13 := st_meter.Basic.Current_B;
-	pmDev.Value14 := st_meter.Basic.Real_PowerB;
-	pmDev.Value15 := st_meter.Basic.Voltage_CA;
-	pmDev.Value16 := st_meter.Basic.Voltage_CN;
-	pmDev.Value17 := st_meter.Basic.Current_C;
-	pmDev.Value18 := st_meter.Basic.Real_PowerC;
-	pmDev.Value19 := st_meter.Basic.THDF_Current_N;
-	pmDev.Value20 := st_meter.Basic.THDF_Voltage_LN;
-	pmDev.Value21 := st_meter.Basic.THDF_Current_A;
-	pmDev.Value22 := st_meter.Basic.THDF_Voltage_AB;
-	pmDev.Value23 := st_meter.Basic.THDF_Current_B;
-	pmDev.Value24 := st_meter.Basic.THDF_Voltage_BC;
-	pmDev.Value25 := st_meter.Basic.THDF_Current_C;
-	pmDev.Value26 := st_meter.Basic.THDF_Voltage_CA;
-	pmDev.Value27 := st_meter.Basic.RealEnergy_IntoLoad;
-	pmDev.Value28 := st_meter.Basic.ReactiveEnergy_IntoLoad;
-	pmDev.Value29 := st_meter.Basic.ApparentEnergy_IntoLoad;
-	pmDev.Value30 := st_meter.Basic.RealEnergy_OutLoad;
-	pmDev.Value31 := st_meter.Basic.ReactiveEnergy_OutLoad;
-	pmDev.Value32 := st_meter.Basic.ApparentEnergy_OutLoad;]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="CalculateVirtualMeter" Id="{94a54871-6893-4261-8e03-616b0f50695a}">
       <Declaration><![CDATA[METHOD CalculateVirtualMeter : BOOL
 VAR_INPUT
@@ -153,12 +177,45 @@ END_VAR]]></Declaration>
       </Implementation>
     </Method>
     <LineIds Name="MAIN">
-      <LineId Id="20105" Count="82" />
+      <LineId Id="20105" Count="8" />
+      <LineId Id="20195" Count="0" />
+      <LineId Id="20114" Count="6" />
+      <LineId Id="20205" Count="0" />
+      <LineId Id="20215" Count="0" />
+      <LineId Id="20217" Count="1" />
+      <LineId Id="20220" Count="4" />
+      <LineId Id="20227" Count="0" />
+      <LineId Id="20225" Count="0" />
+      <LineId Id="20219" Count="0" />
+      <LineId Id="20226" Count="0" />
+      <LineId Id="20209" Count="0" />
+      <LineId Id="20228" Count="4" />
+      <LineId Id="20210" Count="0" />
+      <LineId Id="20234" Count="2" />
+      <LineId Id="20233" Count="0" />
+      <LineId Id="20261" Count="0" />
+      <LineId Id="20211" Count="0" />
+      <LineId Id="20238" Count="2" />
+      <LineId Id="20237" Count="0" />
+      <LineId Id="20241" Count="0" />
+      <LineId Id="20212" Count="0" />
+      <LineId Id="20243" Count="2" />
+      <LineId Id="20242" Count="0" />
+      <LineId Id="20254" Count="0" />
+      <LineId Id="20213" Count="0" />
+      <LineId Id="20247" Count="2" />
+      <LineId Id="20246" Count="0" />
+      <LineId Id="20255" Count="0" />
+      <LineId Id="20214" Count="0" />
+      <LineId Id="20251" Count="2" />
+      <LineId Id="20250" Count="0" />
+      <LineId Id="20256" Count="0" />
+      <LineId Id="20206" Count="0" />
+      <LineId Id="20258" Count="2" />
+      <LineId Id="20257" Count="0" />
+      <LineId Id="20207" Count="0" />
+      <LineId Id="20121" Count="66" />
       <LineId Id="6718" Count="0" />
-    </LineIds>
-    <LineIds Name="MAIN.AsignOneMeterDetail">
-      <LineId Id="7" Count="30" />
-      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="MAIN.CalculateVirtualMeter">
       <LineId Id="12" Count="1" />

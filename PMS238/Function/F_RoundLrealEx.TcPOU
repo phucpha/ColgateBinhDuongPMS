@@ -17,7 +17,8 @@ F_RoundLrealEx := lrTemp / EXPT(10,iPrecision);]]></ST>
     </Implementation>
     <LineIds Name="F_RoundLrealEx">
       <LineId Id="7" Count="0" />
-      <LineId Id="11" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="12" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

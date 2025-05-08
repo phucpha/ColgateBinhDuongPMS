@@ -5,6 +5,9 @@
 VAR_GLOBAL
 	fbMachineLogger : FB_FileLogger;
 	fbMachineTime	: AliasOnlyThisProject;
+END_VAR
+VAR_GLOBAL CONSTANT
+	TIME_INIT	: TIME := T#30S;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
