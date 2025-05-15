@@ -19,19 +19,7 @@
     <MultiuserUrl>ads://192.168.1.20.1.240/PMS</MultiuserUrl>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Class Diagram.TcCD">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\AliasOnlyThisProject.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\DaysMonthYears\St_days.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\DaysMonthYears\St_daysMonthsYears.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\DaysMonthYears\St_Months.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\E_CompareTime.TcDUT">
@@ -40,28 +28,10 @@
     <Compile Include="DUTs\ION9000\E_PM_ION9000_Address.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DUTs\metterReport\St_MettersReportData.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\metterReport\st_PowersKw.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DUTs\metterReport\St_StateMetterReport.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DUTs\PM_Simulate\E_listMeterName.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\PM_Simulate\E_PM_Simulate.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Function\CompareDate.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Function\CompareHour.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Function\CompareMinute.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Function\CompareTime.TcPOU">
@@ -77,9 +47,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Function\IsGoodData.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Function\POU.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Function\TimeStruct_To_sTimeAveva.TcPOU">
@@ -104,10 +71,6 @@
     </Compile>
     <Compile Include="POUs\CalAccum\FB_CalCulateAccumulation.TcPOU">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\CalAccum\fb_CalCulateAccumulation_Test.TcPOU">
-      <SubType>Code</SubType>
-      <ExcludeFromBuild>true</ExcludeFromBuild>
     </Compile>
     <Compile Include="POUs\CrossCheckTime\FB_TimeCrossCheck2System.TcPOU">
       <SubType>Code</SubType>
@@ -201,27 +164,32 @@
     </Compile>
     <Compile Include="Universal\Utilities\StringMerge\FUN_MergeLongStrings10.TcPOU">
       <SubType>Code</SubType>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
     <Compile Include="Universal\Utilities\StringMerge\FUN_MergeStrings10.TcPOU">
       <SubType>Code</SubType>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
     <Compile Include="Universal\Utilities\StringMerge\FUN_MergeStrings3.TcPOU">
       <SubType>Code</SubType>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
     <Compile Include="Universal\Utilities\StringMerge\FUN_MergeStrings4.TcPOU">
       <SubType>Code</SubType>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
     <Compile Include="Universal\Utilities\StringMerge\FUN_MergeStrings5.TcPOU">
       <SubType>Code</SubType>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
     <Compile Include="Universal\Utilities\StringMerge\FUN_MergeStrings6.TcPOU">
       <SubType>Code</SubType>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="DUTs\metterReport" />
-    <Folder Include="DUTs\DaysMonthYears" />
     <Folder Include="DUTs\ION9000" />
     <Folder Include="DUTs\PM_Simulate" />
     <Folder Include="GVLs" />
