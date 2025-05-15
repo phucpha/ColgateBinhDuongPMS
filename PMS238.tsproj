@@ -13,7 +13,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{8DEE6238-5646-4BB7-B85C-1837E0364044}" Name="PMS238" PrjFilePath="PMS238\PMS238.plcproj" TmcFilePath="PMS238\PMS238.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PMS238\PMS238.tmc" TmcHash="{E57900A6-6EAD-AA40-CA5B-73537AF72057}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="PMS238\PMS238.tmc" TmcHash="{FB3A979D-69CD-3C1D-E0C8-528649E2C1B4}">
 					<Name>PMS238 Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Contexts>

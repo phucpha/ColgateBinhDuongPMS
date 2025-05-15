@@ -90,6 +90,63 @@ VAR PERSISTENT
 		Kit        : LREAL;
 		Chiller       : LREAL;
 		Other       : LREAL;
+		
+		//Hour
+		// virtual object
+	////Power Virtual Meter	// new require 19/07	
+		MaySayKhi_H			: 	LREAL;
+		OilCoolingPump_H		: 	LREAL;
+		LightNVO_H				: 	LREAL;
+		CP_WHEF1_H	            : 	LREAL;
+		CP_WHEF2_H	            :	LREAL;
+		DB_FIC_H	              :	LREAL;
+	
+	// date 2508
+	//Machine
+		PKG_HoongA_H				: 	LREAL;
+		PKG_Other_H				: 	LREAL;
+		TE_Tufting_H				: 	LREAL;
+		TE_End_H					:	LREAL;
+		IM_VIM_H					: 	LREAL;
+		IM_HIM_H					: 	LREAL;
+		MIXING_H					: 	LREAL;
+		LIGHTING_IM_H				: 	LREAL;
+		LIGHTING_PKG_TE_H			: 	LREAL;
+		AIRCOMP1_H	       : LREAL;
+		AIRCOMP2_H	       : LREAL;
+		AIRCOMP3_H	       : LREAL;
+		AIRCOMP4_H	       : LREAL;
+		AIRCOMP5_H	       : LREAL;
+		BLISTER_FORMING_H	       : LREAL;
+		LIGHTING_BLISTER_H	       : LREAL;
+		CHILLER4_H	       : LREAL;
+		CHILLER5_H	       : LREAL;
+		CHILLER6_H	       : LREAL;
+		OIL_COOLING_H	       : LREAL;
+		TE_AFT_H	       : LREAL;
+		TE_HEPTA_H	       : LREAL;
+		TE_FREXILINE_H	       : LREAL;
+		OFFICE_GROUND_H	       : LREAL;
+		OFFICE_1_H	       : LREAL;
+		CANTEEN_H	       : LREAL;
+		SECURITY_FONT_H	       : LREAL;
+		SECURITY_BACK_H	       : LREAL;
+		LIGHTING_RM_H	       : LREAL;
+		LIGHTING_FG_H	       : LREAL;
+	//Area
+		PKG_H	       : LREAL;
+		TE_H	       : LREAL;
+		IM_H	       : LREAL;
+		AreaMixing_H	       : LREAL;
+		Lighting_H	       : LREAL;
+		Aircomp_H	       : LREAL;
+		HVACAHU_H	       : LREAL;
+		GROUND_H	       : LREAL;
+		Layer1_H	       : LREAL;
+		HVAC_H	       : LREAL;
+		Kit_H	        : LREAL;
+		Chiller_H	       : LREAL;
+		Other_H	       : LREAL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -220,7 +277,119 @@ END_VAR
 		SECURITY_FONT         :=          arFIFOEnergy_1D[ LP_EL1].OldestData;
 		SECURITY_BACK         :=          arFIFOEnergy_1D[ LP_EL2].OldestData;
 		LIGHTING_RM         :=          arFIFOEnergy_1D[ LP_WH1].OldestData;
-		LIGHTING_FG         :=          arFIFOEnergy_1D[ LP_WH2].OldestData;]]></ST>
+		LIGHTING_FG         :=          arFIFOEnergy_1D[ LP_WH2].OldestData;
+//hour
+///require 25/08	
+	//Area
+		PKG_H	   :=	arFIFOEnergy_1H[ DB1].OldestData
+												+arFIFOEnergy_1H[ DB2].OldestData
+												+arFIFOEnergy_1H[ DB11].OldestData ;
+												
+		TE_H	    := arFIFOEnergy_1H[ DB3].OldestData
+												+arFIFOEnergy_1H[ DB10].OldestData
+												+arFIFOEnergy_1H[ DB12].OldestData;
+												
+		IM_H	    := arFIFOEnergy_1H[ DB4].OldestData
+												+arFIFOEnergy_1H[ DB5].OldestData
+												+arFIFOEnergy_1H[ DB6].OldestData
+												+arFIFOEnergy_1H[ DB7].OldestData
+												+arFIFOEnergy_1H[ DB8].OldestData
+												+arFIFOEnergy_1H[ DB9].OldestData;
+												
+		AreaMixing_H	   := arFIFOEnergy_1H[ DB_MR].OldestData;
+		Lighting_H	     := arFIFOEnergy_1H[ LP_PR1A].OldestData
+														+arFIFOEnergy_1H[ LP_PR1B].OldestData
+														+arFIFOEnergy_1H[ LP_PR2A].OldestData
+														+arFIFOEnergy_1H[ LP_PR2B].OldestData
+														+arFIFOEnergy_1H[ LP_PR3A].OldestData
+														+arFIFOEnergy_1H[ LP_PR3B].OldestData
+														+arFIFOEnergy_1H[ LP_PR4A].OldestData
+														+arFIFOEnergy_1H[ LP_PR4B].OldestData
+														+arFIFOEnergy_1H[ LP_BM].OldestData
+														+arFIFOEnergy_1H[ LP_WH1].OldestData
+														+arFIFOEnergy_1H[ LP_WH2].OldestData
+														+arFIFOEnergy_1H[ LP_PR5A].OldestData
+														+arFIFOEnergy_1H[ LP_PR5B].OldestData
+														+arFIFOEnergy_1H[ LP_PR6A].OldestData
+														+arFIFOEnergy_1H[ LP_PR6B].OldestData;
+														
+		Aircomp_H	   := arFIFOEnergy_1H[ DB_AIRCOMP].OldestData;
+		HVACAHU_H	   := arFIFOEnergy_1H[ DB_AHU].OldestData;
+		GROUND_H	    := arFIFOEnergy_1H[ DB_OFF1].OldestData;
+		Layer1_H	    := arFIFOEnergy_1H[ DB_OFF2].OldestData;
+		HVAC_H	      := arFIFOEnergy_1H[ DB_MVAC1].OldestData;
+		Kit_H	       := arFIFOEnergy_1H[ DB_kit].OldestData;
+		Chiller_H	   := arFIFOEnergy_1H[ DB_MVAC2].OldestData;
+		Other_H	     := arFIFOEnergy_1H[ LV01].OldestData
+														+arFIFOEnergy_1H[ LV02].OldestData
+														+arFIFOEnergy_1H[ LV03].OldestData
+														+arFIFOEnergy_1H[ LV04].OldestData;
+	//Machine
+		PKG_HoongA_H	         :=    arFIFOEnergy_1H[ DB1_1].OldestData
+																+arFIFOEnergy_1H[ DB2_1].OldestData
+																+arFIFOEnergy_1H[ DB11_1].OldestData;
+																		
+		PKG_Other_H	      :=   arFIFOEnergy_1H[ DB1_2].OldestData
+																+arFIFOEnergy_1H[ DB2_2].OldestData
+																+arFIFOEnergy_1H[ DB11_2].OldestData;
+		TE_Tufting_H	     :=   arFIFOEnergy_1H[ DB3_1].OldestData
+																+arFIFOEnergy_1H[ DB10_1].OldestData
+																+arFIFOEnergy_1H[ DB12_1].OldestData;
+		TE_End_H	         :=   arFIFOEnergy_1H[ DB3_2].OldestData
+																+arFIFOEnergy_1H[ DB10_2].OldestData
+																+arFIFOEnergy_1H[ DB12_2].OldestData;
+		IM_VIM_H	         :=   arFIFOEnergy_1H[ DB4_1].OldestData
+																+arFIFOEnergy_1H[ DB5_1].OldestData
+																+arFIFOEnergy_1H[ DB6_1].OldestData
+																+arFIFOEnergy_1H[ DB7_1].OldestData
+																+arFIFOEnergy_1H[ DB8_1].OldestData
+																+arFIFOEnergy_1H[ DB9_1].OldestData;
+		IM_HIM_H	         :=    arFIFOEnergy_1H[ DB4_2].OldestData
+																+arFIFOEnergy_1H[ DB5_2].OldestData
+																+arFIFOEnergy_1H[ DB6_2].OldestData
+																+arFIFOEnergy_1H[ DB7_2].OldestData
+																+arFIFOEnergy_1H[ DB8_2].OldestData
+																+arFIFOEnergy_1H[ DB9_2].OldestData
+																+arFIFOEnergy_1H[ DB14_2].OldestData
+																+arFIFOEnergy_1H[ DB15_2].OldestData
+																+arFIFOEnergy_1H[ DB13_2].OldestData;
+																
+		MIXING_H	         :=    arFIFOEnergy_1H[ DB_MR].OldestData;
+		LIGHTING_IM_H	    :=    arFIFOEnergy_1H[ LP_PR1A].OldestData
+																+arFIFOEnergy_1H[ LP_PR1B].OldestData
+																+arFIFOEnergy_1H[ LP_PR3A].OldestData
+																+arFIFOEnergy_1H[ LP_PR3B].OldestData
+																+arFIFOEnergy_1H[ LP_PR5A].OldestData
+																+arFIFOEnergy_1H[ LP_PR5B].OldestData;
+																
+		LIGHTING_PKG_TE_H	  :=  arFIFOEnergy_1H[ LP_PR4A].OldestData
+																+arFIFOEnergy_1H[ LP_PR4B].OldestData
+																+arFIFOEnergy_1H[ LP_PR2A].OldestData
+																+arFIFOEnergy_1H[ LP_PR2B].OldestData
+																+arFIFOEnergy_1H[ LP_PR6A].OldestData
+																+arFIFOEnergy_1H[ LP_PR6B].OldestData;
+																
+		AIRCOMP1_H	         :=          arFIFOEnergy_1H[ A1].OldestData;
+		AIRCOMP2_H	         :=          arFIFOEnergy_1H[ A2].OldestData;
+		AIRCOMP3_H	         :=          arFIFOEnergy_1H[ A3].OldestData;
+		AIRCOMP4_H	         :=          arFIFOEnergy_1H[ A4].OldestData;
+		AIRCOMP5_H	         :=          arFIFOEnergy_1H[ A5].OldestData;
+		BLISTER_FORMING_H	         :=          arFIFOEnergy_1H[ DB_BM].OldestData;
+		LIGHTING_BLISTER_H	         :=          arFIFOEnergy_1H[ LP_BM].OldestData;
+		CHILLER4_H	         :=          arFIFOEnergy_1H[ CH4].OldestData;
+		CHILLER5_H	         :=          arFIFOEnergy_1H[ CH5].OldestData;
+		CHILLER6_H	         :=          arFIFOEnergy_1H[ CH6].OldestData;
+		OIL_COOLING_H	         :=          arFIFOEnergy_1H[ DB_MVAC1].OldestData;
+		TE_AFT_H	         :=          arFIFOEnergy_1H[ DB13_1].OldestData;
+		TE_HEPTA_H	         :=          arFIFOEnergy_1H[ DB14_1].OldestData;
+		TE_FREXILINE_H	         :=          arFIFOEnergy_1H[ DB15_1].OldestData;
+		OFFICE_GROUND_H	         :=          arFIFOEnergy_1H[ DB_OFF1].OldestData;
+		OFFICE_1_H	         :=          arFIFOEnergy_1H[ DB_OFF2].OldestData;
+		CANTEEN_H	         :=          arFIFOEnergy_1H[ DB_KIT].OldestData;
+		SECURITY_FONT_H	         :=          arFIFOEnergy_1H[ LP_EL1].OldestData;
+		SECURITY_BACK_H	         :=          arFIFOEnergy_1H[ LP_EL2].OldestData;
+		LIGHTING_RM_H	         :=          arFIFOEnergy_1H[ LP_WH1].OldestData;
+		LIGHTING_FG_H	         :=          arFIFOEnergy_1H[ LP_WH2].OldestData;]]></ST>
       </Implementation>
     </Method>
     <Method Name="Init" Id="{4f1b42e8-fb39-475d-8e20-8f82a8868d68}">
@@ -738,6 +907,11 @@ END_CASE
     <LineIds Name="PmReport2.CalculateVirtualObject">
       <LineId Id="6" Count="109" />
       <LineId Id="5" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="121" Count="26" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="149" Count="81" />
+      <LineId Id="120" Count="0" />
     </LineIds>
     <LineIds Name="PmReport2.Init">
       <LineId Id="187" Count="1" />
